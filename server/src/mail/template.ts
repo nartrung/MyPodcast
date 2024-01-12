@@ -141,7 +141,7 @@ export const generateTemplate = (options: Options) => {
       </head>
       <body
         style="
-          background-color: #fff0e3;
+          background-color: #fdb56d;
           margin: 0;
           padding: 0;
           -webkit-text-size-adjust: none;
@@ -157,7 +157,7 @@ export const generateTemplate = (options: Options) => {
           style="
             mso-table-lspace: 0pt;
             mso-table-rspace: 0pt;
-            background-color: #fff0e3;
+            background-color: #fdb56d;
           "
           width="100%"
         >

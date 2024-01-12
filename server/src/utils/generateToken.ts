@@ -6,3 +6,5 @@ export const generateToken = (length: number) => {
   }
   return otp;
 };
+
+
