@@ -1,3 +1,4 @@
+import { hash, compare } from "bcrypt";
 import { Model, ObjectId, Schema, model } from "mongoose";
 
 interface UserType{
@@ -12,7 +13,11 @@ interface UserType{
     followings: ObjectId[];
 }
 
-const UserSchema = new Schema<UserType>({
+interface Methods{
+    comparePassword(password: string): Promise<boolean>
+}
+
+const UserSchema = new Schema<UserType, {}, Methods>({
     name:{
         type: String,
         required: true,
@@ -52,4 +57,15 @@ const UserSchema = new Schema<UserType>({
     tokens:[String]
 }, {timestamps: true});
 
-export default model("User", UserSchema) as Model<UserType>
+UserSchema.pre("save", async function (next) {
+    if (this.isModified("password")) {
+      this.password = await hash(this.password, 10);
+    }
+    next();
+  });
+  
+  UserSchema.methods.comparePassword = async function (password) {
+    return compare(password, this.password);
+}
+
+export default model("User", UserSchema) as Model<UserType,{}, Methods>
