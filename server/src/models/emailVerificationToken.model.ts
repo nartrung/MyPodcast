@@ -1,6 +1,5 @@
 import { Model, ObjectId, Schema, model } from "mongoose";
 import { hash, compare } from "bcrypt";
-import { Token } from "nodemailer/lib/xoauth2";
 
 interface EmailVerificationType {
   owner: ObjectId;
@@ -8,11 +7,15 @@ interface EmailVerificationType {
   createdAt: Date;
 }
 
-interface Methods{
-    compareToken(token: string): Promise<boolean>
+interface Methods {
+  compareToken(token: string): Promise<boolean>;
 }
 
-const EmailVerificationTokensSchema = new Schema<EmailVerificationType,{},Methods>({
+const EmailVerificationTokensSchema = new Schema<
+  EmailVerificationType,
+  {},
+  Methods
+>({
   owner: {
     type: Schema.Types.ObjectId,
     required: true,
@@ -38,10 +41,10 @@ EmailVerificationTokensSchema.pre("save", async function (next) {
 });
 
 EmailVerificationTokensSchema.methods.compareToken = async function (token) {
-    return compare(token, this.token);
-}
+  return compare(token, this.token);
+};
 
 export default model(
   "EmailVerificationToken",
   EmailVerificationTokensSchema
-) as Model<EmailVerificationType,{},Methods>;
+) as Model<EmailVerificationType, {}, Methods>;

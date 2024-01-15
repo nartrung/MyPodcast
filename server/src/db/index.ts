@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import {URI} from "#/utils/variables";
+import { URI } from "#/utils/variables";
 
 mongoose.set("strictQuery", true);
 mongoose
