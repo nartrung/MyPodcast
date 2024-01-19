@@ -21,3 +21,27 @@ export interface ChangePassword extends Request {
     password: string;
   };
 }
+
+export interface SignIn extends Request {
+  body: {
+    email: string;
+    password: string;
+  };
+}
+
+declare global {
+  namespace Express {
+    interface Request {
+      user: {
+        id: any;
+        name: string;
+        email: string;
+        verified: boolean;
+        avatar?: string;
+        followers: number;
+        followings: number;
+      };
+      token: string;
+    }
+  }
+}

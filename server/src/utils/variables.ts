@@ -4,3 +4,6 @@ export const MAILTRAP_PASS = process.env.MAILTRAP_PASS as string;
 export const MAILTRAP_HOST = process.env.MAILTRAP_HOST as string;
 export const VERIFICATION_EMAIL_HOST = process.env.VERIFICATION_EMAIL_HOST as string;
 export const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY as string;
+export const CLOUDINARY_NAME = process.env.CLOUDINARY_NAME as string;
+export const CLOUDINARY_KEY = process.env.CLOUDINARY_KEY as string;
+export const CLOUDINARY_SECRET = process.env.CLOUDINARY_SECRET as string;

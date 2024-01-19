@@ -26,3 +26,8 @@ export const VerifyTokenSchema = yup.object().shape({
     })
     .required("Invalid User ID"),
 });
+
+export const SignInSchema = yup.object().shape({
+  email: yup.string().required("Email is required.It cannot be empty!").email("Invalid Email!"),
+  password: yup.string().trim().required("Password is missing!"),
+});

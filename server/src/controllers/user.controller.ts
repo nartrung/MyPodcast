@@ -2,13 +2,15 @@ import User from "#/models/user.model";
 import EmailVerificationToken from "#/models/emailVerificationToken.model";
 import PasswordResetToken from "#/models/passwordResetToken.model";
 
-import { ChangePassword, CreateUser, VerifyToken } from "#/@types/user";
+import { ChangePassword, CreateUser, VerifyToken, SignIn } from "#/@types/user";
 import { RequestHandler } from "express";
 import { generateToken } from "#/utils/generateToken";
 import { sendVerificationEmail, sendPasswordResetLink } from "#/utils/sendEmail";
 import { isValidObjectId } from "mongoose";
 import jwt from "jsonwebtoken";
 import { JWT_SECRET_KEY } from "#/utils/variables";
+import { RequestWithFiles } from "#/middlewares/upload-file";
+import cloudinary from "#/cloud";
 
 export const create: RequestHandler = async (req: CreateUser, res) => {
   const { name, email, password } = req.body;
@@ -45,14 +47,14 @@ export const verifyEmail: RequestHandler = async (req: VerifyToken, res) => {
 
   if (!verificationToken) {
     return res.status(403).json({
-      message: "Invalid Token",
+      error: "Invalid Token",
     });
   }
 
   const matchToken = verificationToken?.compareToken(token);
   if (!matchToken) {
     return res.status(403).json({
-      message: "Invalid Token",
+      error: "Invalid Token",
     });
   }
 
@@ -104,7 +106,7 @@ export const handleForgotPassword: RequestHandler = async (req, res) => {
   const user = await User.findOne({ email });
   if (!user) {
     return res.status(403).json({
-      message: "Email not exist!",
+      error: "Email not exist!",
     });
   }
   const token = generateToken(6);
@@ -133,14 +135,14 @@ export const verifyPasswordResetToken: RequestHandler = async (req: VerifyToken,
 
   if (!verificationToken) {
     return res.status(403).json({
-      message: "Invalid Token",
+      error: "Invalid Token",
     });
   }
 
   const matchToken = verificationToken?.compareToken(token);
   if (!matchToken) {
     return res.status(403).json({
-      message: "Invalid Token",
+      error: "Invalid Token",
     });
   }
 
@@ -159,7 +161,7 @@ export const changePassword: RequestHandler = async (req: ChangePassword, res) =
 
   if (!user) {
     return res.status(403).json({
-      message: "User not exist",
+      error: "User not exist",
     });
   }
 
@@ -170,5 +172,106 @@ export const changePassword: RequestHandler = async (req: ChangePassword, res) =
   res.status(201).json({
     valid: true,
     message: "Change password successful!",
+  });
+};
+
+export const signIn: RequestHandler = async (req: SignIn, res) => {
+  const { email, password } = req.body;
+
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    return res.status(403).json({
+      error: "Wrong Email or Password! Please try again",
+    });
+  }
+
+  const matchPassword = user.comparePassword(password);
+  if (!matchPassword) {
+    return res.status(403).json({
+      error: "Wrong Email or Password! Please try again",
+    });
+  }
+
+  const token = jwt.sign({ userId: user._id }, JWT_SECRET_KEY);
+  user.tokens.push(token);
+  await user.save();
+
+  res.status(201).json({
+    profile: {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      verified: user.verified,
+      avatar: user.avatar?.url,
+      followers: user.followers.length,
+      followings: user.followings.length,
+    },
+    token,
+  });
+};
+
+export const updateProfile: RequestHandler = async (req: RequestWithFiles, res) => {
+  const { name } = req.body;
+  const avatar = req.files?.avatar;
+
+  const user = await User.findById(req.user.id);
+  if (!user) {
+    throw new Error("Something went wrong!");
+  }
+
+  if (typeof name != "string" || name.trim().length < 3) {
+    res.status(422).json({
+      error: "Invalid name",
+    });
+  }
+
+  user.name = name;
+  if (avatar) {
+    if (user.avatar?.publicId) {
+      await cloudinary.uploader.destroy(user.avatar?.publicId);
+    }
+    const { secure_url, public_id } = await cloudinary.uploader.upload(avatar.filepath, {
+      with: 400,
+      height: 400,
+      crop: "thumb",
+      gravity: "face",
+      folder: "MyPodcast",
+    });
+
+    user.avatar = { url: secure_url, publicId: public_id };
+  }
+
+  await user.save();
+  res.status(201).json({
+    success: true,
+    message: "Profile has been updated",
+  });
+};
+
+export const sendProfile: RequestHandler = async (req, res) => {
+  res.json({
+    user: req.user,
+  });
+};
+
+export const logout: RequestHandler = async (req, res) => {
+  const { logoutAll } = req.query;
+
+  const token = req.token;
+  const user = await User.findById(req.user.id);
+  if (!user) {
+    throw new Error("Something went wrong");
+  }
+
+  if (logoutAll === "yes") {
+    user.tokens = [];
+  } else {
+    user.tokens.filter((token) => token !== token);
+  }
+  await user.save();
+  res.status(201).json({
+    success: true,
+    message: "Logged out!",
   });
 };
