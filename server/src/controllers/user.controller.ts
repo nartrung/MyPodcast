@@ -28,6 +28,7 @@ export const create: RequestHandler = async (req: CreateUser, res) => {
   });
 
   res.status(201).json({
+    success: true,
     user: {
       id: user._id,
       name: name,
@@ -47,6 +48,7 @@ export const verifyEmail: RequestHandler = async (req: VerifyToken, res) => {
 
   if (!verificationToken) {
     return res.status(403).json({
+      success: false,
       error: "Invalid Token",
     });
   }
@@ -54,6 +56,7 @@ export const verifyEmail: RequestHandler = async (req: VerifyToken, res) => {
   const matchToken = verificationToken?.compareToken(token);
   if (!matchToken) {
     return res.status(403).json({
+      success: false,
       error: "Invalid Token",
     });
   }
@@ -65,6 +68,7 @@ export const verifyEmail: RequestHandler = async (req: VerifyToken, res) => {
   await EmailVerificationToken.findByIdAndDelete(verificationToken._id);
 
   res.status(201).json({
+    success: false,
     message: "Your Email has been verified",
   });
 };
@@ -73,11 +77,17 @@ export const verifyEmail: RequestHandler = async (req: VerifyToken, res) => {
 export const reVerifyEmail: RequestHandler = async (req, res) => {
   const { userId } = req.body;
   if (!isValidObjectId(userId)) {
-    return res.status(403).json("Invalid User ID");
+    return res.status(403).json({
+      success: false,
+      error: "Invalid User ID",
+    });
   }
   const user = await User.findOne({ owner: userId });
   if (!user) {
-    return res.status(403).json("Cannot find the user");
+    return res.status(403).json({
+      success: false,
+      error: "Cannot find the user",
+    });
   }
 
   await EmailVerificationToken.findOneAndDelete({
@@ -96,6 +106,7 @@ export const reVerifyEmail: RequestHandler = async (req, res) => {
   });
 
   res.status(201).json({
+    success: true,
     message: "Please check your Email to take the code.",
   });
 };
@@ -106,6 +117,7 @@ export const handleForgotPassword: RequestHandler = async (req, res) => {
   const user = await User.findOne({ email });
   if (!user) {
     return res.status(403).json({
+      success: false,
       error: "Email not exist!",
     });
   }
@@ -121,6 +133,7 @@ export const handleForgotPassword: RequestHandler = async (req, res) => {
 
   sendPasswordResetLink(token, user.email);
   res.status(201).json({
+    success: true,
     message: "Please check your Email to take the code.",
   });
 };
@@ -135,6 +148,7 @@ export const verifyPasswordResetToken: RequestHandler = async (req: VerifyToken,
 
   if (!verificationToken) {
     return res.status(403).json({
+      success: false,
       error: "Invalid Token",
     });
   }
@@ -142,6 +156,7 @@ export const verifyPasswordResetToken: RequestHandler = async (req: VerifyToken,
   const matchToken = verificationToken?.compareToken(token);
   if (!matchToken) {
     return res.status(403).json({
+      success: false,
       error: "Invalid Token",
     });
   }
@@ -161,6 +176,7 @@ export const changePassword: RequestHandler = async (req: ChangePassword, res) =
 
   if (!user) {
     return res.status(403).json({
+      success: false,
       error: "User not exist",
     });
   }
@@ -182,6 +198,7 @@ export const signIn: RequestHandler = async (req: SignIn, res) => {
 
   if (!user) {
     return res.status(403).json({
+      success: false,
       error: "Wrong Email or Password! Please try again",
     });
   }
@@ -189,6 +206,7 @@ export const signIn: RequestHandler = async (req: SignIn, res) => {
   const matchPassword = user.comparePassword(password);
   if (!matchPassword) {
     return res.status(403).json({
+      success: false,
       error: "Wrong Email or Password! Please try again",
     });
   }
@@ -198,6 +216,7 @@ export const signIn: RequestHandler = async (req: SignIn, res) => {
   await user.save();
 
   res.status(201).json({
+    success: true,
     profile: {
       id: user._id,
       name: user.name,
@@ -222,6 +241,7 @@ export const updateProfile: RequestHandler = async (req: RequestWithFiles, res) 
 
   if (typeof name != "string" || name.trim().length < 3) {
     res.status(422).json({
+      success: false,
       error: "Invalid name",
     });
   }
