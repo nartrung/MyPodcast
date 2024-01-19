@@ -14,27 +14,34 @@ import cloudinary from "#/cloud";
 
 export const create: RequestHandler = async (req: CreateUser, res) => {
   const { name, email, password } = req.body;
-  const user = await User.create({ name, email, password });
+  try {
+    const user = await User.create({ name, email, password });
 
-  //send email to verify
-  const token = generateToken(6);
-  await EmailVerificationToken.create({
-    owner: user._id,
-    token: token,
-  });
-  sendVerificationEmail(token, {
-    name: name,
-    email: email,
-  });
-
-  res.status(201).json({
-    success: true,
-    user: {
-      id: user._id,
+    //send email to verify
+    const token = generateToken(6);
+    await EmailVerificationToken.create({
+      owner: user._id,
+      token: token,
+    });
+    sendVerificationEmail(token, {
       name: name,
       email: email,
-    },
-  });
+    });
+
+    res.status(201).json({
+      success: true,
+      user: {
+        id: user._id,
+        name: name,
+        email: email,
+      },
+    });
+  } catch (err) {
+    return res.status(403).json({
+      success: false,
+      error: "User already exists",
+    });
+  }
 };
 
 //Verify Email
@@ -239,14 +246,17 @@ export const updateProfile: RequestHandler = async (req: RequestWithFiles, res) 
     throw new Error("Something went wrong!");
   }
 
-  if (typeof name != "string" || name.trim().length < 3) {
-    res.status(422).json({
-      success: false,
-      error: "Invalid name",
-    });
+  if (name) {
+    if (typeof name != "string" || name.trim().length < 3) {
+      res.status(422).json({
+        success: false,
+        error: "Invalid name",
+      });
+    }
+
+    user.name = name;
   }
 
-  user.name = name;
   if (avatar) {
     if (user.avatar?.publicId) {
       await cloudinary.uploader.destroy(user.avatar?.publicId);
