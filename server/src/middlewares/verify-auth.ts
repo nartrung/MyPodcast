@@ -13,27 +13,34 @@ export const verifyAuth: RequestHandler = async (req, res, next) => {
     });
   }
 
-  const paload = verify(token, JWT_SECRET_KEY) as JwtPayload;
-  const userId = paload.userId;
+  try {
+    const paload = verify(token, JWT_SECRET_KEY) as JwtPayload;
+    const userId = paload.userId;
 
-  const user = await User.findById(userId);
-  if (!user) {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(403).json({
+        success: false,
+        error: "Can not authorization",
+      });
+    }
+    req.user = {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      verified: user.verified,
+      avatar: user.avatar?.url,
+      followers: user.followers.length,
+      followings: user.followings.length,
+    };
+    req.token = token;
+    next();
+  } catch (error) {
     return res.status(403).json({
       success: false,
       error: "Can not authorization",
     });
   }
-  req.user = {
-    id: user._id,
-    name: user.name,
-    email: user.email,
-    verified: user.verified,
-    avatar: user.avatar?.url,
-    followers: user.followers.length,
-    followings: user.followings.length,
-  };
-  req.token = token;
-  next();
 };
 
 export const isVerified: RequestHandler = (req, res, next) => {
