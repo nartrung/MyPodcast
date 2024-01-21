@@ -43,12 +43,6 @@ const UserSchema = new Schema<UserType, {}, Methods>(
       url: String,
       publicId: String,
     },
-    favorites: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Audio",
-      },
-    ],
     followers: [
       {
         type: Schema.Types.ObjectId,

@@ -288,7 +288,7 @@ export const sendProfile: RequestHandler = async (req, res) => {
 export const logout: RequestHandler = async (req, res) => {
   const { logoutAll } = req.query;
 
-  const token = req.token;
+  const atoken = req.token;
   const user = await User.findById(req.user.id);
   if (!user) {
     throw new Error("Something went wrong");
@@ -297,7 +297,7 @@ export const logout: RequestHandler = async (req, res) => {
   if (logoutAll === "yes") {
     user.tokens = [];
   } else {
-    user.tokens.filter((token) => token !== token);
+    user.tokens.filter((token) => token !== atoken);
   }
   await user.save();
   res.status(201).json({

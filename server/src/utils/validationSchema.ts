@@ -19,13 +19,9 @@ export const VerifyTokenSchema = yup.object().shape({
   userId: yup
     .string()
     .transform(function (value) {
-      if (this.isType(value) && isValidObjectId(value)) {
-        return value;
-      } else {
-        return "";
-      }
+      return this.isType(value) && isValidObjectId(value) ? value : "";
     })
-    .required("Invalid User ID"),
+    .required("User ID cannot be empty"),
 });
 
 export const SignInSchema = yup.object().shape({
@@ -43,4 +39,19 @@ export const UpdateAudioSchema = yup.object().shape({
   title: yup.string(),
   description: yup.string(),
   category: yup.string().oneOf(categories),
+});
+
+export const CreateNewPlaylistSchema = yup.object().shape({
+  title: yup.string().required("Title is required.It cannot be empty!"),
+});
+
+export const UpdateOldPlaylistSchema = yup.object().shape({
+  title: yup.string(),
+  playlistId: yup.string().transform(function (value) {
+    return this.isType(value) && isValidObjectId(value) ? value : "";
+  }),
+  audioId: yup.string().transform(function (value) {
+    return this.isType(value) && isValidObjectId(value) ? value : "";
+  }),
+  visibility: yup.string().oneOf(["public", "private"], "Visibility must be public or private"),
 });
