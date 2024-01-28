@@ -55,3 +55,13 @@ export const UpdateOldPlaylistSchema = yup.object().shape({
   }),
   visibility: yup.string().oneOf(["public", "private"], "Visibility must be public or private"),
 });
+
+export const UpdateHistorySchema = yup.object().shape({
+  audioId: yup
+    .string()
+    .transform(function (value) {
+      return this.isType(value) && isValidObjectId(value) ? value : "";
+    })
+    .required("AudioId cannot be empty!"),
+  progress: yup.number().required("Audio's progress cannot be empty"),
+});
