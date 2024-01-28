@@ -10,6 +10,8 @@ export interface AudioType<T = ObjectId> {
   poster?: { url: string; publicId: string };
   likes: ObjectId[];
   category: categoriesTypes;
+  verified: boolean;
+  createdAt: string;
 }
 
 const AudioSchema = new Schema<AudioType>(
@@ -49,6 +51,10 @@ const AudioSchema = new Schema<AudioType>(
       type: String,
       enum: categories,
       default: "Khác",
+    },
+    verified: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true }
