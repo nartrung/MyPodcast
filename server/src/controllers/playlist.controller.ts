@@ -34,11 +34,14 @@ export const updatePlaylist: RequestHandler = async (req: updatePlaylistRequest,
   if (visibility) playlist.visibility = visibility;
   playlist.save();
   if (audioId) {
-    const audio = await Audio.findById(audioId);
+    const audio = await Audio.findOne({
+      _id: audioId,
+      verified: true,
+    });
     if (!audio) {
       return res.status(404).json({
         success: false,
-        error: "Audio to add not found",
+        error: "Audio need to be verified! Please wait for admin to verify the Podcast!",
       });
     }
     await Playlist.findByIdAndUpdate(playlist._id, {
