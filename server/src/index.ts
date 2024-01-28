@@ -5,6 +5,9 @@ import authRouter from "./routes/authRouter";
 import audioRouter from "./routes/audioRouter";
 import favoriteRouter from "./routes/favoriteRouter";
 import playlistRouter from "./routes/playlistRouter";
+import profileRouter from "./routes/profileRouter";
+import historyRouter from "./routes/historyRouter";
+import "./utils/schedule";
 
 const app = express();
 const PORT = 8080;
@@ -16,7 +19,9 @@ app.use("/auth", authRouter);
 app.use("/audio", audioRouter);
 app.use("/favorite", favoriteRouter);
 app.use("/playlist", playlistRouter);
+app.use("/profile", profileRouter);
+app.use("/history", historyRouter);
 
 app.listen(PORT, () => {
-  console.log("App is running at port " + PORT);
+  console.log("\u001b[1;32mApp is running at port " + PORT);
 });
