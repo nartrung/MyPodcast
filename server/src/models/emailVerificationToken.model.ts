@@ -11,11 +11,7 @@ interface Methods {
   compareToken(token: string): Promise<boolean>;
 }
 
-const EmailVerificationTokensSchema = new Schema<
-  EmailVerificationType,
-  {},
-  Methods
->({
+const EmailVerificationTokensSchema = new Schema<EmailVerificationType, {}, Methods>({
   owner: {
     type: Schema.Types.ObjectId,
     required: true,
@@ -27,8 +23,8 @@ const EmailVerificationTokensSchema = new Schema<
   },
   createdAt: {
     type: Date,
-    //Expire Token after 5 minutes
-    expires: 300,
+    //Expire Token after 1 hour
+    expires: 3600,
     default: Date.now(),
   },
 });
@@ -44,7 +40,8 @@ EmailVerificationTokensSchema.methods.compareToken = async function (token) {
   return compare(token, this.token);
 };
 
-export default model(
-  "EmailVerificationToken",
-  EmailVerificationTokensSchema
-) as Model<EmailVerificationType, {}, Methods>;
+export default model("EmailVerificationToken", EmailVerificationTokensSchema) as Model<
+  EmailVerificationType,
+  {},
+  Methods
+>;

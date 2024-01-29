@@ -19,14 +19,16 @@ export const create: RequestHandler = async (req: CreateUser, res) => {
 
     //send email to verify
     const token = generateToken(6);
-    await EmailVerificationToken.create({
+    const verifyEmail = await EmailVerificationToken.create({
       owner: user._id,
       token: token,
     });
-    sendVerificationEmail(token, {
-      name: name,
-      email: email,
-    });
+    if (verifyEmail) {
+      sendVerificationEmail(token, {
+        name: name,
+        email: email,
+      });
+    }
 
     res.status(201).json({
       success: true,
@@ -56,7 +58,7 @@ export const verifyEmail: RequestHandler = async (req: VerifyToken, res) => {
   if (!verificationToken) {
     return res.status(403).json({
       success: false,
-      error: "Invalid Token",
+      error: "Invalid User",
     });
   }
 
@@ -75,7 +77,7 @@ export const verifyEmail: RequestHandler = async (req: VerifyToken, res) => {
   await EmailVerificationToken.findByIdAndDelete(verificationToken._id);
 
   res.status(201).json({
-    success: false,
+    success: true,
     message: "Your Email has been verified",
   });
 };
