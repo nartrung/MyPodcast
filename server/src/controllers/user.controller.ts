@@ -91,7 +91,7 @@ export const reVerifyEmail: RequestHandler = async (req, res) => {
       error: "Invalid User ID",
     });
   }
-  const user = await User.findOne({ owner: userId });
+  const user = await User.findOne({ _id: userId, verified: false });
   if (!user) {
     return res.status(403).json({
       success: false,

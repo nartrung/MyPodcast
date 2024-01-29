@@ -147,12 +147,16 @@ export const getPlaylistAudios: RequestHandler = async (req, res) => {
     if (playlist.visibility === "public") {
       res.json({
         success: true,
+        playlistId: playlistId,
+        playlist: playlist.title,
         audios: audios,
       });
     } else {
       if (playlist.owner.toString() == req.user.id) {
         res.json({
           success: true,
+          playlistId: playlistId,
+          playlist: playlist.title,
           audios: audios,
         });
       } else {

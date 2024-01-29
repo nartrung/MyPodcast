@@ -416,3 +416,13 @@ export const getFollowings: RequestHandler = async (req, res) => {
 
   res.json({ followings: result.followings });
 };
+
+export const IsFollowing: RequestHandler = async (req, res) => {
+  const { userId } = req.params;
+
+  if (!isValidObjectId(userId)) return res.status(422).json({ error: "Invalid user id!" });
+
+  const user = await User.findOne({ _id: userId, followers: req.user.id });
+
+  res.json({ success: true, following: user ? true : false });
+};
