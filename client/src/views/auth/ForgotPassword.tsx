@@ -1,6 +1,6 @@
 import colors from '@utils/colors';
 import InputField from '@components/form/InputField';
-import {FC, useState} from 'react';
+import {FC} from 'react';
 import {Image, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import * as yup from 'yup';
 import Form from '@components/form/Form';
