@@ -15,7 +15,7 @@ const initialValues = {
   password: '',
 };
 
-const signUpValidationSchema = yup.object({
+const logInValidationSchema = yup.object({
   email: yup
     .string()
     .trim('Vui lòng nhập Email của bạn')
@@ -50,7 +50,7 @@ const LogIn: FC<Props> = props => {
           console.log(values);
         }}
         initialValues={initialValues}
-        validationSchema={signUpValidationSchema}>
+        validationSchema={logInValidationSchema}>
         <View style={styles.formContainer}>
           <InputField
             name="email"
@@ -73,7 +73,7 @@ const LogIn: FC<Props> = props => {
           </View>
           <View>
             <Text style={styles.policy}>
-              Bằng cách tiếp tục, bạn đã đồng ý với{' '}
+              Bằng cách tiếp tục, bạn đã đồng ý với
               <Text style={styles.innerText}> Chính sách bảo mật </Text>
               và
               <Text style={styles.innerText}> Quyền riêng tư </Text>
@@ -112,9 +112,6 @@ const styles = StyleSheet.create({
     fontSize: 32,
     marginBottom: 12,
     color: colors.PRIMARY,
-  },
-  text: {
-    fontFamily: 'opensans_regular',
   },
   policy: {
     marginBottom: 8,
