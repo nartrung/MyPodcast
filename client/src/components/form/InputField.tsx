@@ -52,7 +52,7 @@ const InputField: FC<Props> = props => {
         ) : null}
       </View>
       <View>
-        <Text style={styles.error}>{errorMassage}</Text>
+        {errorMassage && <Text style={styles.error}>{errorMassage}</Text>}
       </View>
     </View>
   );
@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
     color: colors.CONTRAST,
     paddingHorizontal: 8,
     marginBottom: 6,
-    fontSize: 12,
+    fontSize: 14,
     fontFamily: 'opensans_bold',
   },
   error: {
