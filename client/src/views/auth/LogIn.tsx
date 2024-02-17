@@ -7,6 +7,8 @@ import Form from '@components/form/Form';
 import SubmitButton from '@components/form/SubmitButton';
 import PasswordVisibilityIcon from '@ui/PasswordVisibilityIcon';
 import AppLink from '@ui/AppLink';
+import {NavigationProp, useNavigation} from '@react-navigation/native';
+import {AuthStackNavigitionScreen} from 'src/@type/navigation';
 
 interface Props {}
 
@@ -34,6 +36,7 @@ const logInValidationSchema = yup.object({
 
 const LogIn: FC<Props> = props => {
   const [secureEntry, setSecureEntry] = useState(true);
+  const navigation = useNavigation<NavigationProp<AuthStackNavigitionScreen>>();
 
   const togglePasswordVisibility = () => {
     setSecureEntry(!secureEntry);
@@ -68,8 +71,18 @@ const LogIn: FC<Props> = props => {
             onIconPress={togglePasswordVisibility}
           />
           <View style={styles.linkContainer}>
-            <AppLink title="Quên mật khẩu" />
-            <AppLink title="Đăng ký tài khoản" />
+            <AppLink
+              title="Quên mật khẩu"
+              onPress={() => {
+                navigation.navigate('ForgotPassword');
+              }}
+            />
+            <AppLink
+              title="Đăng ký tài khoản"
+              onPress={() => {
+                navigation.navigate('SignUp');
+              }}
+            />
           </View>
           <View>
             <Text style={styles.policy}>
@@ -80,7 +93,7 @@ const LogIn: FC<Props> = props => {
               của
               <Text style={styles.innerText}> My Podcast</Text>
             </Text>
-            <SubmitButton title="Đăng ký" />
+            <SubmitButton title="Đăng nhập" />
           </View>
         </View>
       </Form>

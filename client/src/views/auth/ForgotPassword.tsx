@@ -5,6 +5,9 @@ import {Image, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import * as yup from 'yup';
 import Form from '@components/form/Form';
 import SubmitButton from '@components/form/SubmitButton';
+import BackIcon from '@ui/BackIcon';
+import {NavigationProp, useNavigation} from '@react-navigation/native';
+import {AuthStackNavigitionScreen} from 'src/@type/navigation';
 
 interface Props {}
 
@@ -21,9 +24,16 @@ const emailValidationSchema = yup.object({
 });
 
 const ForgotPassword: FC<Props> = props => {
+  const navigation = useNavigation<NavigationProp<AuthStackNavigitionScreen>>();
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.heading}>
+        <BackIcon
+          onIconPress={() => {
+            navigation.navigate('LogIn');
+          }}
+        />
         <Text style={styles.title}>Quên mật khẩu</Text>
         <Image
           source={require('../../assets/images/MyPodcastForgotPassword.png')}

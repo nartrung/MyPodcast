@@ -7,6 +7,9 @@ import Form from '@components/form/Form';
 import SubmitButton from '@components/form/SubmitButton';
 import PasswordVisibilityIcon from '@ui/PasswordVisibilityIcon';
 import AppLink from '@ui/AppLink';
+import {NavigationProp, useNavigation} from '@react-navigation/native';
+import {AuthStackNavigitionScreen} from 'src/@type/navigation';
+import BackIcon from '@ui/BackIcon';
 
 interface Props {}
 
@@ -39,6 +42,7 @@ const signUpValidationSchema = yup.object({
 
 const SignUp: FC<Props> = props => {
   const [secureEntry, setSecureEntry] = useState(true);
+  const navigation = useNavigation<NavigationProp<AuthStackNavigitionScreen>>();
 
   const togglePasswordVisibility = () => {
     setSecureEntry(!secureEntry);
@@ -47,6 +51,11 @@ const SignUp: FC<Props> = props => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.heading}>
+        <BackIcon
+          onIconPress={() => {
+            navigation.navigate('LogIn');
+          }}
+        />
         <Image source={require('../../assets/images/MyPodcastLogo.png')} />
         <Text style={styles.title}>Đăng ký tài khoản</Text>
       </View>
@@ -80,7 +89,12 @@ const SignUp: FC<Props> = props => {
           />
           <View style={styles.linkContainer}>
             <Text style={styles.text}>Đã có tài khoản?</Text>
-            <AppLink title=" Đăng nhập ngay" />
+            <AppLink
+              title=" Đăng nhập ngay"
+              onPress={() => {
+                navigation.navigate('LogIn');
+              }}
+            />
           </View>
           <View>
             <Text style={styles.policy}>

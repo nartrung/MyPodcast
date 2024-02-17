@@ -1,10 +1,12 @@
-import {SafeAreaView} from 'react-native';
-import SignUp from '@views/auth/SignUp';
-import LogIn from '@views/auth/LogIn';
-import ForgotPassword from '@views/auth/ForgotPassword';
-import Verification from '@views/auth/Verification';
+import {NavigationContainer} from '@react-navigation/native';
+import AuthNavigator from 'src/navigation/AuthNavigator';
+
 const App = () => {
-  return <Verification></Verification>;
+  return (
+    <NavigationContainer>
+      <AuthNavigator />
+    </NavigationContainer>
+  );
 };
 
 export default App;
