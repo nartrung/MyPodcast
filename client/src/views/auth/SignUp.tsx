@@ -10,8 +10,16 @@ import AppLink from '@ui/AppLink';
 import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {AuthStackNavigitionScreen} from 'src/@type/navigation';
 import BackIcon from '@ui/BackIcon';
+import {FormikHelpers} from 'formik';
+import axios from 'axios';
 
 interface Props {}
+
+interface NewUser {
+  name: string;
+  email: string;
+  password: string;
+}
 
 const initialValues = {
   name: '',
@@ -48,6 +56,20 @@ const SignUp: FC<Props> = props => {
     setSecureEntry(!secureEntry);
   };
 
+  const handleSubmit = async (
+    values: NewUser,
+    actions: FormikHelpers<NewUser>,
+  ) => {
+    try {
+      const {data} = await axios.post('http://10.0.2.2:8080/auth/register', {
+        ...values,
+      });
+      navigation.navigate('EmailVerification', {userInfo: data.user});
+    } catch (err) {
+      console.log('Sign Up Error', err);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.heading}>
@@ -60,9 +82,7 @@ const SignUp: FC<Props> = props => {
         <Text style={styles.title}>Đăng ký tài khoản</Text>
       </View>
       <Form
-        onSubmit={values => {
-          console.log(values);
-        }}
+        onSubmit={handleSubmit}
         initialValues={initialValues}
         validationSchema={signUpValidationSchema}>
         <View style={styles.formContainer}>

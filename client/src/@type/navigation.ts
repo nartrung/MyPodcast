@@ -1,6 +1,13 @@
+interface NewUser {
+  id: string;
+  name: string;
+  email: string;
+}
+
 export type AuthStackNavigitionScreen = {
   LogIn: undefined;
   SignUp: undefined;
   ForgotPassword: undefined;
-  Verification: undefined;
+  PasswordVerification: undefined;
+  EmailVerification: {userInfo: NewUser};
 };

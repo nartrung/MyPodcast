@@ -11,12 +11,15 @@ import {
 import AppOTPFeild from '@ui/AppOTPFeild';
 import AppLink from '@ui/AppLink';
 import AppButton from '@ui/AppButton';
+import {NavigationProp, useNavigation} from '@react-navigation/native';
+import {AuthStackNavigitionScreen} from 'src/@type/navigation';
+import BackIcon from '@ui/BackIcon';
 
 interface Props {}
 
 const OTPFeild = new Array(6).fill('');
 
-const Verification: FC<Props> = props => {
+const PasswordVerification: FC<Props> = props => {
   const [otp, setOtp] = useState([...OTPFeild]);
   const [activeOTPIndex, setActiveOTPIndex] = useState(0);
 
@@ -51,9 +54,16 @@ const Verification: FC<Props> = props => {
     inputRef.current?.focus();
   }, [activeOTPIndex]);
 
+  const navigation = useNavigation<NavigationProp<AuthStackNavigitionScreen>>();
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.heading}>
+        <BackIcon
+          onIconPress={() => {
+            navigation.navigate('SignUp');
+          }}
+        />
         <Text style={styles.title}>Quên mật khẩu</Text>
       </View>
       <View style={styles.formContainer}>
@@ -80,7 +90,7 @@ const Verification: FC<Props> = props => {
         <View style={styles.linkContainer}>
           <AppLink title="Gửi lại OTP" />
         </View>
-        <View>
+        <View style={styles.submit}>
           <AppButton onPress={handleSubmit} title="Xác thực OTP" />
         </View>
       </View>
@@ -126,6 +136,10 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     marginBottom: 24,
   },
+  submit: {
+    height: '37%',
+    justifyContent: 'center',
+  },
 });
 
-export default Verification;
+export default PasswordVerification;
