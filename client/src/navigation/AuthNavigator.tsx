@@ -5,6 +5,7 @@ import SignUp from '@views/auth/SignUp';
 import PasswordVerification from '@views/auth/PasswordVerification';
 import {AuthStackNavigitionScreen} from 'src/@type/navigation';
 import EmailVerification from '@views/auth/EmailVerification';
+import ResetPassword from '@views/auth/ResetPassword';
 
 const Stack = createNativeStackNavigator<AuthStackNavigitionScreen>();
 
@@ -22,6 +23,9 @@ const AuthNavigator = () => {
       <Stack.Screen
         name="EmailVerification"
         component={EmailVerification}></Stack.Screen>
+      <Stack.Screen
+        name="ResetPassword"
+        component={ResetPassword}></Stack.Screen>
     </Stack.Navigator>
   );
 };

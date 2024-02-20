@@ -63,18 +63,23 @@ const EmailVerification: FC<Props> = props => {
     if (!isValidOtp) return;
 
     try {
-      const {data} = await axios.post(
-        'http://10.0.2.2:8080/auth/verify-email',
-        {
-          userId: userInfo.id,
-          token: otp.join(''),
-        },
-      );
+      await axios.post('http://10.0.2.2:8080/auth/verify-email', {
+        userId: userInfo.id,
+        token: otp.join(''),
+      });
       navigation.navigate('LogIn');
-
-      console.log(data);
     } catch (error) {
       console.log('Loi xac thuc email', error);
+    }
+  };
+
+  const resendOTP = async () => {
+    try {
+      await axios.post('http://10.0.2.2:8080/auth/reverify-email', {
+        userId: userInfo.id,
+      });
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -114,7 +119,7 @@ const EmailVerification: FC<Props> = props => {
           })}
         </View>
         <View style={styles.linkContainer}>
-          <AppLink title="Gửi lại OTP" />
+          <AppLink title="Gửi lại OTP" onPress={resendOTP} />
         </View>
         <View style={styles.submit}>
           <AppButton onPress={handleSubmit} title="Xác thực OTP" />

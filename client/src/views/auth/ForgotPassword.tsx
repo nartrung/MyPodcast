@@ -8,8 +8,14 @@ import SubmitButton from '@components/form/SubmitButton';
 import BackIcon from '@ui/BackIcon';
 import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {AuthStackNavigitionScreen} from 'src/@type/navigation';
+import {FormikHelpers} from 'formik';
+import axios from 'axios';
 
 interface Props {}
+
+interface UserEmail {
+  email: string;
+}
 
 const initialValues = {
   email: '',
@@ -25,6 +31,25 @@ const emailValidationSchema = yup.object({
 
 const ForgotPassword: FC<Props> = props => {
   const navigation = useNavigation<NavigationProp<AuthStackNavigitionScreen>>();
+  const handleSubmit = async (
+    values: UserEmail,
+    actions: FormikHelpers<UserEmail>,
+  ) => {
+    actions.setSubmitting(true);
+    try {
+      const {data} = await axios.post(
+        'http://10.0.2.2:8080/auth/forgot-password',
+        {
+          ...values,
+        },
+      );
+      navigation.navigate('PasswordVerification', {id: data.id});
+      console.log(data);
+    } catch (err) {
+      console.log('Sign Up Error', err);
+    }
+    actions.setSubmitting(false);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -40,9 +65,7 @@ const ForgotPassword: FC<Props> = props => {
         />
       </View>
       <Form
-        onSubmit={values => {
-          console.log(values);
-        }}
+        onSubmit={handleSubmit}
         initialValues={initialValues}
         validationSchema={emailValidationSchema}>
         <View style={styles.formContainer}>

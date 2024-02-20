@@ -14,8 +14,13 @@ import AppButton from '@ui/AppButton';
 import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {AuthStackNavigitionScreen} from 'src/@type/navigation';
 import BackIcon from '@ui/BackIcon';
+import axios from 'axios';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
 
-interface Props {}
+type Props = NativeStackScreenProps<
+  AuthStackNavigitionScreen,
+  'PasswordVerification'
+>;
 
 const OTPFeild = new Array(6).fill('');
 
@@ -46,8 +51,27 @@ const PasswordVerification: FC<Props> = props => {
     }
   };
 
-  const handleSubmit = () => {
-    console.log(otp.join(''));
+  const isValidOtp = otp.every(value => {
+    return value.trim();
+  });
+  const {id} = props.route.params;
+  const handleSubmit = async () => {
+    if (!isValidOtp) return;
+
+    try {
+      const {data} = await axios.post(
+        'http://10.0.2.2:8080/auth/verify-pass-token',
+        {
+          userId: id,
+          token: otp.join(''),
+        },
+      );
+      navigation.navigate('ResetPassword', {id: id});
+
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -61,7 +85,7 @@ const PasswordVerification: FC<Props> = props => {
       <View style={styles.heading}>
         <BackIcon
           onIconPress={() => {
-            navigation.navigate('SignUp');
+            navigation.navigate('ForgotPassword');
           }}
         />
         <Text style={styles.title}>Quên mật khẩu</Text>
@@ -86,9 +110,6 @@ const PasswordVerification: FC<Props> = props => {
               />
             );
           })}
-        </View>
-        <View style={styles.linkContainer}>
-          <AppLink title="Gửi lại OTP" />
         </View>
         <View style={styles.submit}>
           <AppButton onPress={handleSubmit} title="Xác thực OTP" />
@@ -130,11 +151,6 @@ const styles = StyleSheet.create({
     textAlign: 'justify',
     fontFamily: 'opensans_regular',
     color: colors.CONTRAST,
-  },
-  linkContainer: {
-    width: '100%',
-    alignItems: 'flex-end',
-    marginBottom: 24,
   },
   submit: {
     height: '37%',
