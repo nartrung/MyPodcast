@@ -1,7 +1,14 @@
 import colors from '@utils/colors';
 import InputField from '@components/form/InputField';
 import {FC, useState} from 'react';
-import {Image, SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import {
+  Image,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  ToastAndroid,
+  View,
+} from 'react-native';
 import * as yup from 'yup';
 import Form from '@components/form/Form';
 import SubmitButton from '@components/form/SubmitButton';
@@ -9,8 +16,15 @@ import PasswordVisibilityIcon from '@ui/PasswordVisibilityIcon';
 import AppLink from '@ui/AppLink';
 import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {AuthStackNavigitionScreen} from 'src/@type/navigation';
+import {FormikHelpers} from 'formik';
+import axios from 'axios';
 
 interface Props {}
+
+interface LogInUser {
+  email: '';
+  password: '';
+}
 
 const initialValues = {
   email: '',
@@ -36,10 +50,27 @@ const logInValidationSchema = yup.object({
 
 const LogIn: FC<Props> = props => {
   const [secureEntry, setSecureEntry] = useState(true);
+  const [wrongPassword, setWrongPassword] = useState(false);
   const navigation = useNavigation<NavigationProp<AuthStackNavigitionScreen>>();
 
   const togglePasswordVisibility = () => {
     setSecureEntry(!secureEntry);
+  };
+
+  const handleSubmit = async (
+    values: LogInUser,
+    actions: FormikHelpers<LogInUser>,
+  ) => {
+    actions.setSubmitting(true);
+    try {
+      const {data} = await axios.post('http://10.0.2.2:8080/auth/sign-in', {
+        ...values,
+      });
+      ToastAndroid.show('Đăng nhập thành công', ToastAndroid.SHORT);
+    } catch (err) {
+      setWrongPassword(true);
+    }
+    actions.setSubmitting(false);
   };
 
   return (
@@ -48,10 +79,9 @@ const LogIn: FC<Props> = props => {
         <Image source={require('../../assets/images/MyPodcastLogo.png')} />
         <Text style={styles.title}>Đăng nhập</Text>
       </View>
+
       <Form
-        onSubmit={values => {
-          console.log(values);
-        }}
+        onSubmit={handleSubmit}
         initialValues={initialValues}
         validationSchema={logInValidationSchema}>
         <View style={styles.formContainer}>
@@ -70,6 +100,11 @@ const LogIn: FC<Props> = props => {
             icon={<PasswordVisibilityIcon showIcon={secureEntry} />}
             onIconPress={togglePasswordVisibility}
           />
+          {wrongPassword && (
+            <Text style={styles.wrongPassword}>
+              Email hoặc mật khẩu không đúng! Vui lòng thử lại!
+            </Text>
+          )}
           <View style={styles.linkContainer}>
             <AppLink
               title="Quên mật khẩu"
@@ -132,6 +167,19 @@ const styles = StyleSheet.create({
   },
   innerText: {
     color: colors.PRIMARY,
+  },
+  wrongPassword: {
+    height: 36,
+    width: '100%',
+    color: colors.ERROR,
+    paddingHorizontal: 14,
+    paddingTop: 8,
+    marginBottom: 24,
+    marginTop: 8,
+    fontFamily: 'opensans_regular',
+    fontSize: 14,
+    backgroundColor: colors.THIRD,
+    borderRadius: 2,
   },
 });
 

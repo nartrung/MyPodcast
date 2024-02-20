@@ -143,6 +143,7 @@ export const handleForgotPassword: RequestHandler = async (req, res) => {
   sendPasswordResetLink(token, user.email);
   res.status(201).json({
     success: true,
+    id: user._id,
     message: "Please check your Email to take the code.",
   });
 };

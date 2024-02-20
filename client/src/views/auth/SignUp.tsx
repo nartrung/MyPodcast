@@ -60,6 +60,7 @@ const SignUp: FC<Props> = props => {
     values: NewUser,
     actions: FormikHelpers<NewUser>,
   ) => {
+    actions.setSubmitting(true);
     try {
       const {data} = await axios.post('http://10.0.2.2:8080/auth/register', {
         ...values,
@@ -68,6 +69,7 @@ const SignUp: FC<Props> = props => {
     } catch (err) {
       console.log('Sign Up Error', err);
     }
+    actions.setSubmitting(false);
   };
 
   return (
