@@ -18,6 +18,8 @@ import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {AuthStackNavigitionScreen} from 'src/@type/navigation';
 import {FormikHelpers} from 'formik';
 import axios from 'axios';
+import {updateLogInState, updateProfile} from 'src/store/auth';
+import {useDispatch} from 'react-redux';
 
 interface Props {}
 
@@ -52,6 +54,7 @@ const LogIn: FC<Props> = props => {
   const [secureEntry, setSecureEntry] = useState(true);
   const [wrongPassword, setWrongPassword] = useState(false);
   const navigation = useNavigation<NavigationProp<AuthStackNavigitionScreen>>();
+  const dispatch = useDispatch();
 
   const togglePasswordVisibility = () => {
     setSecureEntry(!secureEntry);
@@ -67,6 +70,8 @@ const LogIn: FC<Props> = props => {
         ...values,
       });
       ToastAndroid.show('Đăng nhập thành công', ToastAndroid.SHORT);
+      dispatch(updateProfile(data.profile));
+      dispatch(updateLogInState(true));
     } catch (err) {
       setWrongPassword(true);
     }
