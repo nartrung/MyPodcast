@@ -20,6 +20,7 @@ import {FormikHelpers} from 'formik';
 import axios from 'axios';
 import {updateLogInState, updateProfile} from 'src/store/auth';
 import {useDispatch} from 'react-redux';
+import {keys, storeToAsyncStorage} from '@utils/asyncStorage';
 
 interface Props {}
 
@@ -70,6 +71,8 @@ const LogIn: FC<Props> = props => {
         ...values,
       });
       ToastAndroid.show('Đăng nhập thành công', ToastAndroid.SHORT);
+
+      await storeToAsyncStorage(keys.AUTH_TOKEN, data.token);
       dispatch(updateProfile(data.profile));
       dispatch(updateLogInState(true));
     } catch (err) {

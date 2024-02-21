@@ -1,10 +1,10 @@
 import {FC} from 'react';
-import {View, StyleSheet, Animated, ActivityIndicator} from 'react-native';
+import {ActivityIndicator} from 'react-native';
 
 interface Props {}
 
 const Loader: FC<Props> = props => {
-  return <ActivityIndicator size={30} color="white"></ActivityIndicator>;
+  return <ActivityIndicator size={30} color="#d9d9d9"></ActivityIndicator>;
 };
 
 export default Loader;
