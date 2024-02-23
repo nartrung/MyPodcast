@@ -1,8 +1,9 @@
 import cloudinary from "#/cloud";
 import { RequestHandler } from "express";
 import formidable from "formidable";
-import Audio from "#/models/audio.model";
+import Audio, { AudioType } from "#/models/audio.model";
 import { uploadAudioRequest } from "#/@types/audio";
+import { ObjectId } from "mongoose";
 
 export const uploadNewAudio: RequestHandler = async (req: uploadAudioRequest, res) => {
   const { title, description, category } = req.body;
@@ -99,4 +100,25 @@ export const updateAudio: RequestHandler = async (req: uploadAudioRequest, res) 
       poster: audio.poster?.url,
     },
   });
+};
+
+export const getLatestPodcast: RequestHandler = async (req, res) => {
+  const list = await Audio.find()
+    .sort("-createdAt")
+    .limit(10)
+    .populate<AudioType<{ _id: ObjectId; name: string }>>("owner");
+
+  const audios = list.map((item) => {
+    return {
+      id: item._id,
+      title: item.title,
+      about: item.description,
+      category: item.category,
+      file: item.file.url,
+      poster: item.poster?.url,
+      owner: { name: item.owner.name, id: item.owner._id },
+    };
+  });
+
+  res.json({ audios });
 };
