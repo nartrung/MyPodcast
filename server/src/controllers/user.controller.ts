@@ -41,7 +41,7 @@ export const create: RequestHandler = async (req: CreateUser, res) => {
   } catch (err) {
     return res.status(403).json({
       success: false,
-      error: "User already exists",
+      message: "Email đã được sử dụng",
     });
   }
 };
@@ -62,7 +62,7 @@ export const verifyEmail: RequestHandler = async (req: VerifyToken, res) => {
     });
   }
 
-  const matchToken = verificationToken?.compareToken(token);
+  const matchToken = await verificationToken?.compareToken(token);
   if (!matchToken) {
     return res.status(403).json({
       success: false,
@@ -163,20 +163,20 @@ export const verifyPasswordResetToken: RequestHandler = async (req: VerifyToken,
     });
   }
 
-  const matchToken = verificationToken?.compareToken(token);
+  const matchToken = await verificationToken.compareToken(token);
   if (!matchToken) {
     return res.status(403).json({
       success: false,
       error: "Invalid Token",
     });
+  } else {
+    res.status(201).json({
+      valid: true,
+      message: "You can change your password now",
+    });
   }
 
   await PasswordResetToken.findByIdAndDelete(verificationToken._id);
-
-  res.status(201).json({
-    valid: true,
-    message: "You can change your password now",
-  });
 };
 
 export const changePassword: RequestHandler = async (req: ChangePassword, res) => {
