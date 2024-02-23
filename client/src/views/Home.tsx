@@ -1,18 +1,47 @@
 import {FC} from 'react';
-import {View, StyleSheet, Text} from 'react-native';
+import {View, StyleSheet, Text, Image, ScrollView} from 'react-native';
+import LastestPodcast from '@components/LastestPodcast';
+import colors from '@utils/colors';
 
 interface Props {}
 
 const Home: FC<Props> = props => {
   return (
-    <View style={styles.container}>
-      <Text>Home tab</Text>
+    <View>
+      <ScrollView
+        scrollEnabled={false}
+        style={styles.heading}
+        horizontal
+        showsHorizontalScrollIndicator={false}>
+        <Image
+          style={styles.headingImage}
+          source={require('../assets/images/DummyAvatar.png')}
+        />
+        <Text style={styles.headingTitle}>Nghe ngay</Text>
+      </ScrollView>
+      <LastestPodcast />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {},
+  heading: {
+    height: 60,
+  },
+  headingImage: {
+    height: 40,
+    aspectRatio: 1,
+    borderRadius: 20,
+    marginLeft: 24,
+    marginTop: 10,
+  },
+  headingTitle: {
+    color: colors.PRIMARY,
+    fontSize: 32,
+    fontFamily: 'opensans_bold',
+    marginLeft: 12,
+    marginTop: 10,
+  },
 });
 
 export default Home;
