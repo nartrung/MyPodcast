@@ -11,7 +11,8 @@ import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {AuthStackNavigitionScreen} from 'src/@type/navigation';
 import BackIcon from '@ui/BackIcon';
 import {FormikHelpers} from 'formik';
-import axios from 'axios';
+import axios, {AxiosError} from 'axios';
+import Toast from 'react-native-toast-message';
 
 interface Props {}
 
@@ -67,7 +68,16 @@ const SignUp: FC<Props> = props => {
       });
       navigation.navigate('EmailVerification', {userInfo: data.user});
     } catch (err) {
-      console.log('Sign Up Error', err);
+      if (err instanceof AxiosError)
+        Toast.show({
+          type: 'error',
+          text1: 'Email đã được sử dụng! Vui lòng thử lại!',
+        });
+      else
+        Toast.show({
+          type: 'error',
+          text1: 'Đã có lỗi trong quá trình xử lý!',
+        });
     }
     actions.setSubmitting(false);
   };

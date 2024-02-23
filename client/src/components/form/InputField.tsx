@@ -11,7 +11,10 @@ interface Props {
   keyboardType?: TextInputProps['keyboardType'];
   autoCapitalize?: TextInputProps['autoCapitalize'];
   secureTextEntry?: boolean;
+  multinine?: boolean;
+  numberOfLines?: number;
   icon?: ReactNode;
+  textAlignVertical?: 'auto' | 'center' | 'top' | 'bottom' | undefined;
   onIconPress?(): void;
 }
 
@@ -26,7 +29,10 @@ const InputField: FC<Props> = props => {
     keyboardType,
     autoCapitalize,
     secureTextEntry,
+    multinine,
+    numberOfLines,
     icon,
+    textAlignVertical,
     onIconPress,
   } = props;
   const errorMassage = touched[name] && errors[name] ? errors[name] : '';
@@ -44,6 +50,9 @@ const InputField: FC<Props> = props => {
           onChangeText={handleChange(name)}
           value={values[name]}
           onBlur={handleBlur(name)}
+          multiline={multinine}
+          numberOfLines={numberOfLines}
+          textAlignVertical={textAlignVertical}
         />
         {icon ? (
           <Pressable onPress={onIconPress} style={styles.icon}>

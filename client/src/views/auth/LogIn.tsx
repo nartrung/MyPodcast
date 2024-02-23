@@ -1,14 +1,7 @@
 import colors from '@utils/colors';
 import InputField from '@components/form/InputField';
 import {FC, useState} from 'react';
-import {
-  Image,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  ToastAndroid,
-  View,
-} from 'react-native';
+import {Image, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import * as yup from 'yup';
 import Form from '@components/form/Form';
 import SubmitButton from '@components/form/SubmitButton';
@@ -21,6 +14,7 @@ import axios from 'axios';
 import {updateLogInState, updateProfile} from 'src/store/auth';
 import {useDispatch} from 'react-redux';
 import {keys, storeToAsyncStorage} from '@utils/asyncStorage';
+import Toast from 'react-native-toast-message';
 
 interface Props {}
 
@@ -70,8 +64,10 @@ const LogIn: FC<Props> = props => {
       const {data} = await axios.post('http://10.0.2.2:8080/auth/sign-in', {
         ...values,
       });
-      ToastAndroid.show('Đăng nhập thành công', ToastAndroid.SHORT);
-
+      Toast.show({
+        type: 'success',
+        text1: 'Đăng nhập thành công ',
+      });
       await storeToAsyncStorage(keys.AUTH_TOKEN, data.token);
       dispatch(updateProfile(data.profile));
       dispatch(updateLogInState(true));

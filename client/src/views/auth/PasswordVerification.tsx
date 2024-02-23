@@ -16,6 +16,7 @@ import {AuthStackNavigitionScreen} from 'src/@type/navigation';
 import BackIcon from '@ui/BackIcon';
 import axios from 'axios';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import Toast from 'react-native-toast-message';
 
 type Props = NativeStackScreenProps<
   AuthStackNavigitionScreen,
@@ -59,18 +60,20 @@ const PasswordVerification: FC<Props> = props => {
     if (!isValidOtp) return;
 
     try {
-      const {data} = await axios.post(
-        'http://10.0.2.2:8080/auth/verify-pass-token',
-        {
-          userId: id,
-          token: otp.join(''),
-        },
-      );
+      await axios.post('http://10.0.2.2:8080/auth/verify-pass-token', {
+        userId: id,
+        token: otp.join(''),
+      });
+      Toast.show({
+        type: 'success',
+        text1: 'Xác thực thành công',
+      });
       navigation.navigate('ResetPassword', {id: id});
-
-      console.log(data);
     } catch (error) {
-      console.log(error);
+      Toast.show({
+        type: 'error',
+        text1: 'Mã xác thực không chính xác',
+      });
     }
   };
 

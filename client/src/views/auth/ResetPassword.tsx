@@ -13,6 +13,7 @@ import {FormikHelpers} from 'formik';
 import axios from 'axios';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import BackIcon from '@ui/BackIcon';
+import Toast from 'react-native-toast-message';
 
 type Props = NativeStackScreenProps<AuthStackNavigitionScreen, 'ResetPassword'>;
 
@@ -59,8 +60,15 @@ const ResetPassword: FC<Props> = props => {
         },
       );
       navigation.navigate('LogIn');
+      Toast.show({
+        type: 'success',
+        text1: 'Đổi mật khẩu thành công',
+      });
     } catch (err) {
-      console.log('ChangePass Error', err);
+      Toast.show({
+        type: 'error',
+        text1: 'Đã có lỗi xảy ra!',
+      });
     }
     actions.setSubmitting(false);
   };

@@ -16,6 +16,7 @@ import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {AuthStackNavigitionScreen} from 'src/@type/navigation';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import axios from 'axios';
+import Toast from 'react-native-toast-message';
 
 type Props = NativeStackScreenProps<
   AuthStackNavigitionScreen,
@@ -68,8 +69,15 @@ const EmailVerification: FC<Props> = props => {
         token: otp.join(''),
       });
       navigation.navigate('LogIn');
+      Toast.show({
+        type: 'success',
+        text1: 'Xác thực thành công!',
+      });
     } catch (error) {
-      console.log('Loi xac thuc email', error);
+      Toast.show({
+        type: 'error',
+        text1: 'Mã xác thực không đúng',
+      });
     }
   };
 
@@ -79,7 +87,10 @@ const EmailVerification: FC<Props> = props => {
         userId: userInfo.id,
       });
     } catch (error) {
-      console.log(error);
+      Toast.show({
+        type: 'error',
+        text1: 'Đã có lỗi xảy ra!',
+      });
     }
   };
 
@@ -92,7 +103,7 @@ const EmailVerification: FC<Props> = props => {
       <View style={styles.heading}>
         <BackIcon
           onIconPress={() => {
-            navigation.navigate('SignUp');
+            navigation.navigate('LogIn');
           }}
         />
         <Text style={styles.title}>Xác thực Email</Text>

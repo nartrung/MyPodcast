@@ -13,7 +13,6 @@ const styles = StyleSheet.create({
   input: {
     borderWidth: 2,
     borderColor: colors.STROKE,
-    height: 48,
     borderRadius: 8,
     color: colors.CONTRAST,
     marginBottom: 6,

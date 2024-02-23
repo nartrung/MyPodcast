@@ -10,6 +10,7 @@ import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {AuthStackNavigitionScreen} from 'src/@type/navigation';
 import {FormikHelpers} from 'formik';
 import axios from 'axios';
+import Toast from 'react-native-toast-message';
 
 interface Props {}
 
@@ -44,9 +45,11 @@ const ForgotPassword: FC<Props> = props => {
         },
       );
       navigation.navigate('PasswordVerification', {id: data.id});
-      console.log(data);
     } catch (err) {
-      console.log('Sign Up Error', err);
+      Toast.show({
+        type: 'error',
+        text1: 'Email không tồn tại!',
+      });
     }
     actions.setSubmitting(false);
   };
