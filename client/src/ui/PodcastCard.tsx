@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     height: 112,
     aspectRatio: 1,
     borderRadius: 8,
-    borderColor: colors.PRIMARY,
+    borderColor: colors.THIRD,
     borderWidth: 1,
   },
   title: {

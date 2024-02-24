@@ -2,12 +2,13 @@ import {FC} from 'react';
 import {View, StyleSheet, Text, Image, ScrollView} from 'react-native';
 import LastestPodcast from '@components/LastestPodcast';
 import colors from '@utils/colors';
+import RecommendPodcast from '@components/RecommendPodcast';
 
 interface Props {}
 
 const Home: FC<Props> = props => {
   return (
-    <View>
+    <ScrollView>
       <ScrollView
         scrollEnabled={false}
         style={styles.heading}
@@ -20,7 +21,8 @@ const Home: FC<Props> = props => {
         <Text style={styles.headingTitle}>Nghe ngay</Text>
       </ScrollView>
       <LastestPodcast />
-    </View>
+      <RecommendPodcast />
+    </ScrollView>
   );
 };
 
