@@ -1,22 +1,20 @@
 import colors from '@utils/colors';
 import {FC} from 'react';
-import {StyleSheet, Pressable, Image, Text, Alert} from 'react-native';
+import {StyleSheet, Pressable, Image, Text} from 'react-native';
 
 interface Props {
   poster?: string;
   title: string;
+  onPress?(): void;
+  onLongPress?(): void;
 }
 
-const PodcastCard: FC<Props> = ({poster, title}) => {
+const PodcastCard: FC<Props> = ({poster, title, onLongPress, onPress}) => {
   return (
     <Pressable
       style={styles.lastestPodcast}
-      onPress={() => {
-        Alert.alert('On press');
-      }}
-      onLongPress={() => {
-        Alert.alert('On long press');
-      }}>
+      onPress={onPress}
+      onLongPress={onLongPress}>
       <Image
         style={styles.poster}
         source={

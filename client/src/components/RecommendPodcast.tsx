@@ -3,14 +3,17 @@ import PodcastCardHorizontal from '@ui/PodcastCardHorizontal';
 import colors from '@utils/colors';
 import {FC} from 'react';
 import {View, StyleSheet, Text} from 'react-native';
-import {FetchRecommendPodcast} from 'src/hooks/query';
+import {AudioData, FetchRecommendPodcast} from 'src/hooks/query';
 
-interface Props {}
+interface Props {
+  onPodcastPress(item: AudioData, data: AudioData[]): void;
+  onPodcastLongPress(item: AudioData, data: AudioData[]): void;
+}
 
 const dummyPodcast = new Array(4).fill('');
 
-const RecommendPodcast: FC<Props> = props => {
-  const {data, isLoading} = FetchRecommendPodcast();
+const RecommendPodcast: FC<Props> = ({onPodcastLongPress, onPodcastPress}) => {
+  const {data = [], isLoading} = FetchRecommendPodcast();
   if (isLoading)
     return (
       <LoadingAnimation>
@@ -35,6 +38,8 @@ const RecommendPodcast: FC<Props> = props => {
               key={item.id}
               poster={item.poster}
               owner={item.owner}
+              onLongPress={() => onPodcastLongPress(item, data)}
+              onPress={() => onPodcastPress(item, data)}
             />
           );
         })}

@@ -1,13 +1,7 @@
+import ModalContainer from '@ui/ModalContainer';
 import colors from '@utils/colors';
 import {useState} from 'react';
-import {
-  View,
-  StyleSheet,
-  Modal,
-  Pressable,
-  Text,
-  ScrollView,
-} from 'react-native';
+import {StyleSheet, Pressable, Text, ScrollView} from 'react-native';
 import MaterialComIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 interface Props<T> {
@@ -33,41 +27,32 @@ const CategorySelector = <T extends any>({
     onRequestClose && onRequestClose();
   };
   return (
-    <Modal
-      onRequestClose={onRequestClose}
-      visible={visible}
-      animationType="slide"
-      transparent>
-      <View style={styles.modalContainer}>
-        <Pressable style={styles.backdrop} onPress={onRequestClose} />
-        <View style={styles.modal}>
-          <Text style={styles.title}>Thể loại</Text>
-          <ScrollView>
-            {data.map((item, index) => {
-              return (
-                <Pressable
-                  onPress={() => handleSelection(item, index)}
-                  key={index}
-                  style={styles.selectionContainer}>
-                  {selectedIndex === index ? (
-                    <MaterialComIcons
-                      name="radiobox-marked"
-                      color={colors.PRIMARY}
-                    />
-                  ) : (
-                    <MaterialComIcons
-                      name="radiobox-blank"
-                      color={colors.PRIMARY}
-                    />
-                  )}
-                  {renderItem(item)}
-                </Pressable>
-              );
-            })}
-          </ScrollView>
-        </View>
-      </View>
-    </Modal>
+    <ModalContainer visible={visible} onRequestClose={onRequestClose}>
+      <Text style={styles.title}>Thể loại</Text>
+      <ScrollView>
+        {data.map((item, index) => {
+          return (
+            <Pressable
+              onPress={() => handleSelection(item, index)}
+              key={index}
+              style={styles.selectionContainer}>
+              {selectedIndex === index ? (
+                <MaterialComIcons
+                  name="radiobox-marked"
+                  color={colors.PRIMARY}
+                />
+              ) : (
+                <MaterialComIcons
+                  name="radiobox-blank"
+                  color={colors.PRIMARY}
+                />
+              )}
+              {renderItem(item)}
+            </Pressable>
+          );
+        })}
+      </ScrollView>
+    </ModalContainer>
   );
 };
 

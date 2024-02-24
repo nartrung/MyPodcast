@@ -3,13 +3,16 @@ import PodcastCard from '@ui/PodcastCard';
 import colors from '@utils/colors';
 import {FC} from 'react';
 import {View, StyleSheet, Text, ScrollView} from 'react-native';
-import {FetchLastestPodcast} from 'src/hooks/query';
+import {AudioData, FetchLastestPodcast} from 'src/hooks/query';
 
-interface Props {}
+interface Props {
+  onPodcastPress(item: AudioData, data: AudioData[]): void;
+  onPodcastLongPress(item: AudioData, data: AudioData[]): void;
+}
 
 const dummyPodcast = new Array(4).fill('');
 
-const LastestPodcast: FC<Props> = props => {
+const LastestPodcast: FC<Props> = ({onPodcastPress, onPodcastLongPress}) => {
   const {data, isLoading} = FetchLastestPodcast();
   if (isLoading)
     return (
@@ -34,6 +37,10 @@ const LastestPodcast: FC<Props> = props => {
               title={item.title}
               key={item.id}
               poster={item.poster}
+              onPress={() => onPodcastPress(item, data)}
+              onLongPress={() => {
+                onPodcastLongPress(item, data);
+              }}
             />
           );
         })}

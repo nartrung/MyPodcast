@@ -4,7 +4,7 @@ import {useQuery} from 'react-query';
 import {categoriesTypes} from '@utils/categories';
 import {getDataFromAsyncStorage, keys} from '@utils/asyncStorage';
 
-interface AudioData {
+export interface AudioData {
   id: string;
   title: string;
   about: string;

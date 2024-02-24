@@ -6,18 +6,22 @@ interface Props {
   poster?: string;
   title: string;
   owner: string;
+  onPress?(): void;
+  onLongPress?(): void;
 }
 
-const PodcastCardHorizontal: FC<Props> = ({poster, title, owner}) => {
+const PodcastCardHorizontal: FC<Props> = ({
+  poster,
+  title,
+  owner,
+  onLongPress,
+  onPress,
+}) => {
   return (
     <Pressable
       style={styles.recommendPodcast}
-      onPress={() => {
-        Alert.alert('On press');
-      }}
-      onLongPress={() => {
-        Alert.alert('On long press');
-      }}>
+      onPress={onPress}
+      onLongPress={onLongPress}>
       <View style={styles.horizontalSection}>
         <Image
           style={styles.poster}
