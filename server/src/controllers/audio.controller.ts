@@ -103,7 +103,7 @@ export const updateAudio: RequestHandler = async (req: uploadAudioRequest, res) 
 };
 
 export const getLatestPodcast: RequestHandler = async (req, res) => {
-  const list = await Audio.find()
+  const list = await Audio.find({ verified: true })
     .sort("-createdAt")
     .limit(10)
     .populate<AudioType<{ _id: ObjectId; name: string }>>("owner");
