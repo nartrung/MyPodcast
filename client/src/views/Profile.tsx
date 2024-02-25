@@ -22,7 +22,6 @@ const Profile: FC<Props> = props => {
       equalityFn: shallowEqual,
     },
   );
-  // console.log(profile);
 
   return (
     <View style={styles.container}>
