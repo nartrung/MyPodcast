@@ -12,16 +12,23 @@ import colors from '@utils/colors';
 import RecommendPodcast from '@components/RecommendPodcast';
 import OptionsModal from '@components/OptionsModal';
 import MaterialComIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {AudioData} from 'src/hooks/query';
+import {AudioData, FetchPlaylist} from 'src/hooks/query';
 import axios from 'axios';
 import {getDataFromAsyncStorage, keys} from '@utils/asyncStorage';
 import Toast from 'react-native-toast-message';
+import PlaylistModal from '@components/PlaylistModal';
+import CreatePlaylistModal from '@components/CreatePlaylistModal';
+import {Playlist} from 'src/@type/playlist';
 
 interface Props {}
 
 const Home: FC<Props> = props => {
   const [showOptions, setShowOptions] = useState(false);
+  const [showPlaylists, setShowPlaylists] = useState(false);
+  const [showCreatePlaylists, setShowCreatePlaylists] = useState(false);
   const [selectedPodcast, setSelectedPodcast] = useState<AudioData>();
+
+  const {data} = FetchPlaylist();
 
   const handleAddFav = async () => {
     if (!selectedPodcast) return;
@@ -52,6 +59,74 @@ const Home: FC<Props> = props => {
     }
     setSelectedPodcast(undefined);
     setShowOptions(false);
+  };
+
+  const handleAddPlaylist = () => {
+    setShowPlaylists(true);
+    setShowOptions(false);
+  };
+
+  const handleSubmitCreatePlaylist = async (value: string) => {
+    if (value) {
+      const token = await getDataFromAsyncStorage(keys.AUTH_TOKEN);
+      try {
+        await axios.post(
+          'http://10.0.2.2:8080/playlist/create',
+          {
+            title: value,
+          },
+          {
+            headers: {
+              Authorization: 'Bearer ' + token,
+            },
+          },
+        );
+        Toast.show({
+          type: 'success',
+          text1: 'Tạo playlist thành công',
+        });
+      } catch (error) {
+        Toast.show({
+          type: 'error',
+          text1: 'Đã có lỗi xảy ra! Vui lòng thử lại.',
+        });
+      }
+      setShowCreatePlaylists(false);
+      setShowPlaylists(true);
+    } else {
+      Toast.show({
+        type: 'info',
+        text1: 'Vui lòng nhập tên Playlist',
+      });
+    }
+  };
+
+  const handleUpdatePlaylist = async (item: Playlist) => {
+    const token = await getDataFromAsyncStorage(keys.AUTH_TOKEN);
+    try {
+      const url =
+        'http://10.0.2.2:8080/playlist/update?playlistId=' +
+        item.id +
+        '&audioId=' +
+        selectedPodcast?.id;
+
+      await axios.patch(url, null, {
+        headers: {
+          Authorization: 'Bearer ' + token,
+        },
+      });
+      setShowPlaylists(false);
+      Toast.show({
+        type: 'success',
+        text1: 'Thêm vào Playlist ' + item.title + ' thành công',
+      });
+    } catch (error) {
+      console.log(error);
+      Toast.show({
+        type: 'error',
+        text1: 'Đã có lỗi xảy ra! Vui lòng thử lại.',
+      });
+    }
   };
   return (
     <ScrollView>
@@ -95,7 +170,11 @@ const Home: FC<Props> = props => {
             icon: 'cards-heart-outline',
             onPress: handleAddFav,
           },
-          {title: 'Thêm vào Playlist', icon: 'playlist-music'},
+          {
+            title: 'Thêm vào Playlist',
+            icon: 'playlist-music',
+            onPress: handleAddPlaylist,
+          },
         ]}
         poster={selectedPodcast?.poster}
         title={selectedPodcast?.title}
@@ -107,6 +186,26 @@ const Home: FC<Props> = props => {
             </Pressable>
           );
         }}
+      />
+      <PlaylistModal
+        onAddToPlaylistPress={handleUpdatePlaylist}
+        onCreatePlaylistPress={() => {
+          setShowCreatePlaylists(true);
+          setShowPlaylists(false);
+        }}
+        visible={showPlaylists}
+        onRequestClose={() => {
+          setShowPlaylists(false);
+        }}
+        list={data || []}
+      />
+      <CreatePlaylistModal
+        visible={showCreatePlaylists}
+        onRequestClose={() => {
+          setShowCreatePlaylists(false);
+          setShowPlaylists(true);
+        }}
+        onSubmitCreatePlaylist={handleSubmitCreatePlaylist}
       />
     </ScrollView>
   );

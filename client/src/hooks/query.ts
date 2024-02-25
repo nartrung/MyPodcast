@@ -3,6 +3,7 @@ import Toast from 'react-native-toast-message';
 import {useQuery} from 'react-query';
 import {categoriesTypes} from '@utils/categories';
 import {getDataFromAsyncStorage, keys} from '@utils/asyncStorage';
+import {Playlist} from 'src/@type/playlist';
 
 export interface AudioData {
   id: string;
@@ -45,6 +46,29 @@ const fetchRecommendPodcast = async (): Promise<AudioData[]> => {
 export const FetchRecommendPodcast = () => {
   return useQuery(['recommend-podcast'], {
     queryFn: () => fetchRecommendPodcast(),
+    onError(err) {
+      Toast.show({
+        type: 'error',
+        text1: 'Có lỗi trong quá trình tải',
+      });
+    },
+  });
+};
+
+const fetchPlaylists = async (): Promise<Playlist[]> => {
+  const token = await getDataFromAsyncStorage(keys.AUTH_TOKEN);
+  const {data} = await axios.get('http://10.0.2.2:8080/playlist', {
+    headers: {
+      Authorization: 'Bearer ' + token,
+      'Content-Type': 'multipart/form-data;',
+    },
+  });
+  return data.playlist;
+};
+
+export const FetchPlaylist = () => {
+  return useQuery(['playlists'], {
+    queryFn: () => fetchPlaylists(),
     onError(err) {
       Toast.show({
         type: 'error',
