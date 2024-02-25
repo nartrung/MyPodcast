@@ -39,8 +39,8 @@ const styles = StyleSheet.create({
   },
   modal: {
     width: '90%',
-    maxHeight: '100%',
-    borderRadius: 16,
+    maxHeight: '95%',
+    borderRadius: 12,
     padding: 12,
     backgroundColor: colors.SECONDARY,
   },
