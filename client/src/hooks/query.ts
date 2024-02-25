@@ -13,6 +13,7 @@ export interface AudioData {
   file: string;
   poster: string | undefined;
   owner: string;
+  verified?: boolean | undefined;
 }
 
 const fetchLastestPodcast = async (): Promise<AudioData[]> => {
@@ -69,6 +70,55 @@ const fetchPlaylists = async (): Promise<Playlist[]> => {
 export const FetchPlaylist = () => {
   return useQuery(['playlists'], {
     queryFn: () => fetchPlaylists(),
+    onError(err) {
+      Toast.show({
+        type: 'error',
+        text1: 'Có lỗi trong quá trình tải',
+      });
+    },
+  });
+};
+
+const fetchUploadedPodcast = async (): Promise<AudioData[]> => {
+  const token = await getDataFromAsyncStorage(keys.AUTH_TOKEN);
+  const {data} = await axios.get(
+    'http://10.0.2.2:8080/profile/all-uploads?pageNo=1',
+    {
+      headers: {
+        Authorization: 'Bearer ' + token,
+        'Content-Type': 'multipart/form-data;',
+      },
+    },
+  );
+  return data.audios;
+};
+
+export const FetchUploadedPodcast = () => {
+  return useQuery(['uploaded-podcast'], {
+    queryFn: () => fetchUploadedPodcast(),
+    onError(err) {
+      Toast.show({
+        type: 'error',
+        text1: 'Có lỗi trong quá trình tải',
+      });
+    },
+  });
+};
+
+const fetchFavoritesPodcast = async (): Promise<AudioData[]> => {
+  const token = await getDataFromAsyncStorage(keys.AUTH_TOKEN);
+  const {data} = await axios.get('http://10.0.2.2:8080/favorite/', {
+    headers: {
+      Authorization: 'Bearer ' + token,
+      'Content-Type': 'multipart/form-data;',
+    },
+  });
+  return data.audios;
+};
+
+export const FetchFavoritesPodcast = () => {
+  return useQuery(['favorites-podcast'], {
+    queryFn: () => fetchFavoritesPodcast(),
     onError(err) {
       Toast.show({
         type: 'error',
