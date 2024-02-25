@@ -83,6 +83,7 @@ export const getAllUploads: RequestHandler = async (req, res) => {
       poster: item.poster?.url,
       createdAt: item.createdAt,
       verified: item.verified,
+      owner: req.user.name,
     };
   });
   res.json({
