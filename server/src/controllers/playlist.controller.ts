@@ -9,10 +9,12 @@ export const createPlaylist: RequestHandler = async (req: createNewPlaylistReque
   const ownerId = req.user.id;
 
   await Playlist.create({ title: title, owner: ownerId });
+  const playlist = await Playlist.findOne({ title: title, owner: ownerId });
 
   res.json({
     success: true,
     Playlist: title,
+    id: playlist?._id,
   });
 };
 
@@ -39,7 +41,7 @@ export const updatePlaylist: RequestHandler = async (req: updatePlaylistRequest,
       verified: true,
     });
     if (!audio) {
-      return res.status(404).json({
+      return res.status(403).json({
         success: false,
         error: "Audio need to be verified! Please wait for admin to verify the Podcast!",
       });
