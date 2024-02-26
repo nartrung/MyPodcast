@@ -1,7 +1,7 @@
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import colors from '@utils/colors';
 import Home from '@views/Home';
-import Profile from '@views/Profile';
+import ProfileNavigator from './ProfileNavigator';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialComIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -36,8 +36,8 @@ function TabNavigator() {
         }}
       />
       <Tab.Screen
-        name="Profile"
-        component={Profile}
+        name="ProfileNavigator"
+        component={ProfileNavigator}
         options={{
           tabBarIcon: ({focused}) => {
             return (

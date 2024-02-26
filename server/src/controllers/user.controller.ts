@@ -56,7 +56,7 @@ export const verifyEmail: RequestHandler = async (req: VerifyToken, res) => {
   });
 
   if (!verificationToken) {
-    return res.status(403).json({
+    return res.status(405).json({
       success: false,
       error: "Invalid User",
     });

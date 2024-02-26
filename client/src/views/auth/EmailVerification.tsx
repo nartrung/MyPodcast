@@ -13,20 +13,33 @@ import AppLink from '@ui/AppLink';
 import AppButton from '@ui/AppButton';
 import BackIcon from '@ui/BackIcon';
 import {NavigationProp, useNavigation} from '@react-navigation/native';
-import {AuthStackNavigitionScreen} from 'src/@type/navigation';
+import {
+  AuthStackNavigitionScreen,
+  ProfileStackNavigitionScreen,
+} from 'src/@type/navigation';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
+import {useDispatch, useSelector} from 'react-redux';
+import {RootState} from 'src/store';
+import {getAuthState, updateProfile} from 'src/store/auth';
 
 type Props = NativeStackScreenProps<
-  AuthStackNavigitionScreen,
+  AuthStackNavigitionScreen | ProfileStackNavigitionScreen,
   'EmailVerification'
 >;
+
+type PossibleScreens = {
+  Profile: undefined;
+  LogIn: undefined;
+};
 
 const OTPFeild = new Array(6).fill('');
 
 const EmailVerification: FC<Props> = props => {
-  const navigation = useNavigation<NavigationProp<AuthStackNavigitionScreen>>();
+  const navigation = useNavigation<NavigationProp<PossibleScreens>>();
+  const {goBack} = useNavigation();
+  const dispatch = useDispatch();
 
   const [otp, setOtp] = useState([...OTPFeild]);
   const [activeOTPIndex, setActiveOTPIndex] = useState(0);
@@ -59,7 +72,9 @@ const EmailVerification: FC<Props> = props => {
   const isValidOtp = otp.every(value => {
     return value.trim();
   });
-
+  const profile = useSelector(
+    (rootState: RootState) => getAuthState(rootState).profile,
+  );
   const handleSubmit = async () => {
     if (!isValidOtp) return;
 
@@ -68,12 +83,24 @@ const EmailVerification: FC<Props> = props => {
         userId: userInfo.id,
         token: otp.join(''),
       });
-      navigation.navigate('LogIn');
+
+      if (navigation.getState().routeNames.includes('LogIn')) {
+        navigation.navigate('LogIn');
+      }
+      if (navigation.getState().routeNames.includes('Profile')) {
+        navigation.navigate('Profile');
+      }
+
+      if (profile) {
+        dispatch(updateProfile({...profile, verified: true}));
+      }
       Toast.show({
         type: 'success',
         text1: 'Xác thực thành công!',
       });
     } catch (error) {
+      console.log(error);
+
       Toast.show({
         type: 'error',
         text1: 'Mã xác thực không đúng',
@@ -101,11 +128,7 @@ const EmailVerification: FC<Props> = props => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.heading}>
-        <BackIcon
-          onIconPress={() => {
-            navigation.navigate('LogIn');
-          }}
-        />
+        <BackIcon onIconPress={goBack} />
         <Text style={styles.title}>Xác thực Email</Text>
       </View>
       <View style={styles.formContainer}>

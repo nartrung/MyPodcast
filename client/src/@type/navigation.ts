@@ -16,3 +16,8 @@ export type AuthStackNavigitionScreen = {
   ResetPassword: {id: ForgotPasswordUser};
   EmailVerification: {userInfo: NewUser};
 };
+
+export type ProfileStackNavigitionScreen = {
+  Profile: undefined;
+  EmailVerification: {userInfo: NewUser};
+};

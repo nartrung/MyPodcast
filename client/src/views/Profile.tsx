@@ -7,7 +7,7 @@ import Uploads from './profile/Uploads';
 import Histories from './profile/Histories';
 import Setting from './profile/Setting';
 import colors from '@utils/colors';
-import {useSelector, shallowEqual} from 'react-redux';
+import {useSelector} from 'react-redux';
 import {getAuthState} from 'src/store/auth';
 import {RootState} from 'src/store';
 import ProfileSection from '@components/ProfileSection';
