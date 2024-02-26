@@ -10,6 +10,7 @@ import colors from '@utils/colors';
 import {useSelector, shallowEqual} from 'react-redux';
 import {getAuthState} from 'src/store/auth';
 import {RootState} from 'src/store';
+import ProfileSection from '@components/ProfileSection';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -18,16 +19,11 @@ interface Props {}
 const Profile: FC<Props> = props => {
   const profile = useSelector(
     (rootState: RootState) => getAuthState(rootState).profile,
-    {
-      equalityFn: shallowEqual,
-    },
   );
 
   return (
     <View style={styles.container}>
-      <View>
-        <Text>{profile?.email}</Text>
-      </View>
+      <ProfileSection profile={profile} />
       <Tab.Navigator
         screenOptions={({route}) => ({
           tabBarLabel: ({focused}) => {

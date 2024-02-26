@@ -12,11 +12,15 @@ interface Props {
 }
 
 const checkVerification = (verified: boolean | undefined) => {
-  if (verified == undefined) return <Text></Text>;
+  if (verified == undefined) return null;
   if (verified)
-    return <Text style={{color: colors.SUCCESS}}>Đã phê duyệt</Text>;
+    return (
+      <Text style={{color: colors.SUCCESS, fontSize: 12}}>Đã phê duyệt</Text>
+    );
   if (!verified)
-    return <Text style={{color: colors.ERROR}}>Chưa phê duyệt</Text>;
+    return (
+      <Text style={{color: colors.ERROR, fontSize: 12}}>Chưa phê duyệt</Text>
+    );
 };
 
 const PodcastCardHorizontal: FC<Props> = ({
@@ -75,15 +79,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   textSection: {
-    maxWidth: '80%',
+    maxWidth: '85%',
     paddingHorizontal: 20,
-    paddingVertical: 5,
   },
   title: {
     fontFamily: 'opensans_bold',
     color: colors.CONTRAST,
     fontSize: 16,
-    paddingBottom: 5,
   },
   owner: {
     fontFamily: 'opensans_bold',
