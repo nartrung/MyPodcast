@@ -8,9 +8,9 @@ import Histories from './profile/Histories';
 import Setting from './profile/Setting';
 import colors from '@utils/colors';
 import {useSelector} from 'react-redux';
+import ProfileSection from '@components/ProfileSection';
 import {getAuthState} from 'src/store/auth';
 import {RootState} from 'src/store';
-import ProfileSection from '@components/ProfileSection';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -20,7 +20,6 @@ const Profile: FC<Props> = props => {
   const profile = useSelector(
     (rootState: RootState) => getAuthState(rootState).profile,
   );
-
   return (
     <View style={styles.container}>
       <ProfileSection profile={profile} />

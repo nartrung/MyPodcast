@@ -8,7 +8,7 @@ import {QueryClient, QueryClientProvider} from 'react-query';
 const queryClient = new QueryClient();
 
 const App = () => {
-  // clearDataOfAsyncStorage();
+  clearDataOfAsyncStorage();
   return (
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>

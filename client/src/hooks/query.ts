@@ -4,6 +4,7 @@ import {useQuery} from 'react-query';
 import {categoriesTypes} from '@utils/categories';
 import {getDataFromAsyncStorage, keys} from '@utils/asyncStorage';
 import {Playlist} from 'src/@type/playlist';
+import {UserProfile} from 'src/store/auth';
 
 export interface AudioData {
   id: string;
@@ -119,6 +120,29 @@ const fetchFavoritesPodcast = async (): Promise<AudioData[]> => {
 export const FetchFavoritesPodcast = () => {
   return useQuery(['favorites-podcast'], {
     queryFn: () => fetchFavoritesPodcast(),
+    onError(err) {
+      Toast.show({
+        type: 'error',
+        text1: 'Có lỗi trong quá trình tải',
+      });
+    },
+  });
+};
+
+const fetchProfile = async (): Promise<UserProfile> => {
+  const token = await getDataFromAsyncStorage(keys.AUTH_TOKEN);
+  const {data} = await axios.get('http://10.0.2.2:8080/auth/is-auth', {
+    headers: {
+      Authorization: 'Bearer ' + token,
+      'Content-Type': 'multipart/form-data;',
+    },
+  });
+  return data.user;
+};
+
+export const FetchProfile = () => {
+  return useQuery(['profile'], {
+    queryFn: () => fetchProfile(),
     onError(err) {
       Toast.show({
         type: 'error',

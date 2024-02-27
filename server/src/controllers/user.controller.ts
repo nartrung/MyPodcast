@@ -279,6 +279,15 @@ export const updateProfile: RequestHandler = async (req: RequestWithFiles, res) 
   res.status(201).json({
     success: true,
     message: "Profile has been updated",
+    profile: {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      verified: user.verified,
+      avatar: user.avatar?.url,
+      followers: user.followers.length,
+      followings: user.followings.length,
+    },
   });
 };
 
