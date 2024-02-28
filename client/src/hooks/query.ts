@@ -15,6 +15,7 @@ export interface AudioData {
   poster: string | undefined;
   owner: string;
   verified?: boolean | undefined;
+  ownerId: string;
 }
 
 const fetchLastestPodcast = async (): Promise<AudioData[]> => {

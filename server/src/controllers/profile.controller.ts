@@ -113,7 +113,8 @@ export const getAllUserUploads: RequestHandler = async (req, res) => {
       file: item.file.url,
       poster: item.poster?.url,
       date: item.createdAt,
-      owner: { name: item.owner.name, id: item.owner._id },
+      owner: item.owner.name,
+      ownerId: item.owner._id,
     };
   });
 
@@ -241,6 +242,7 @@ export const getRecommendAudios: RequestHandler = async (req, res) => {
         file: "$file.url",
         poster: "$poster.url",
         owner: "$owner.name",
+        ownerId: "$owner._id",
       },
     },
   ]);

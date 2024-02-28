@@ -85,6 +85,7 @@ export const getAllFavorites: RequestHandler = async (req, res) => {
       file: item.file.url,
       poster: item.poster?.url,
       owner: item.owner.name,
+      ownerId: item.owner._id,
     };
   });
   res.json({
