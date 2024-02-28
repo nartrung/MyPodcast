@@ -41,6 +41,6 @@ const slice = createSlice({
 
 export const {updateProfile, updateLogInState, updateBusyState} = slice.actions;
 
-export const getAuthState = (state: RootState) => state;
+export const getAuthState = (state: RootState) => state.auth;
 
 export default slice.reducer;

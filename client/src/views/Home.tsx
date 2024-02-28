@@ -1,4 +1,4 @@
-import {FC, useState} from 'react';
+import {FC, useEffect, useState} from 'react';
 import {
   View,
   StyleSheet,
@@ -19,6 +19,8 @@ import Toast from 'react-native-toast-message';
 import PlaylistModal from '@components/PlaylistModal';
 import CreatePlaylistModal from '@components/CreatePlaylistModal';
 import {Playlist} from 'src/@type/playlist';
+import TrackPlayer from 'react-native-track-player';
+import audioController from 'src/hooks/audioController';
 
 interface Props {}
 
@@ -27,7 +29,7 @@ const Home: FC<Props> = props => {
   const [showPlaylists, setShowPlaylists] = useState(false);
   const [showCreatePlaylists, setShowCreatePlaylists] = useState(false);
   const [selectedPodcast, setSelectedPodcast] = useState<AudioData>();
-
+  const {audioPress} = audioController();
   const {data} = FetchPlaylist();
 
   const handleAddFav = async () => {
@@ -128,6 +130,13 @@ const Home: FC<Props> = props => {
       });
     }
   };
+
+  useEffect(() => {
+    const setupPlayer = async () => {
+      await TrackPlayer.setupPlayer();
+    };
+    setupPlayer();
+  }, []);
   return (
     <ScrollView>
       <ScrollView
@@ -146,9 +155,7 @@ const Home: FC<Props> = props => {
           setShowOptions(true);
           setSelectedPodcast(item);
         }}
-        onPodcastPress={item => {
-          console.log(item);
-        }}
+        onPodcastPress={audioPress}
       />
       <RecommendPodcast
         onPodcastLongPress={item => {

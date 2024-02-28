@@ -6,6 +6,7 @@ const CONTRAST = '#000';
 const ERROR = '#FF3014';
 const SUCCESS = '#69D34E';
 const STROKE = '#DADADA';
+const OVERLAY = 'rgba(255,255,255, 0.5)';
 
 const colors = {
   BACKGROUND,
@@ -16,6 +17,7 @@ const colors = {
   ERROR,
   SUCCESS,
   STROKE,
+  OVERLAY,
 };
 
 export default colors;

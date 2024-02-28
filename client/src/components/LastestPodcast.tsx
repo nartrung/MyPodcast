@@ -3,7 +3,10 @@ import PodcastCard from '@ui/PodcastCard';
 import colors from '@utils/colors';
 import {FC} from 'react';
 import {View, StyleSheet, Text, ScrollView} from 'react-native';
+import {useSelector} from 'react-redux';
 import {AudioData, FetchLastestPodcast} from 'src/hooks/query';
+import {RootState} from 'src/store';
+import {getPlayerState} from 'src/store/player';
 
 interface Props {
   onPodcastPress(item: AudioData, data: AudioData[]): void;
@@ -14,6 +17,9 @@ const dummyPodcast = new Array(4).fill('');
 
 const LastestPodcast: FC<Props> = ({onPodcastPress, onPodcastLongPress}) => {
   const {data, isLoading} = FetchLastestPodcast();
+  const onGoingAudio = useSelector(
+    (rootState: RootState) => getPlayerState(rootState).onGoingAudio,
+  );
   if (isLoading)
     return (
       <LoadingAnimation>
@@ -41,6 +47,7 @@ const LastestPodcast: FC<Props> = ({onPodcastPress, onPodcastLongPress}) => {
               onLongPress={() => {
                 onPodcastLongPress(item, data);
               }}
+              playing={item.id === onGoingAudio?.id}
             />
           );
         })}

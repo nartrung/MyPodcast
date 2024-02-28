@@ -1,30 +1,42 @@
 import colors from '@utils/colors';
 import {FC} from 'react';
-import {StyleSheet, Pressable, Image, Text} from 'react-native';
+import {StyleSheet, Pressable, Image, Text, View} from 'react-native';
+import PlayingAudioAnimation from './PlayingAudioAnimation';
 
 interface Props {
   poster?: string;
   title: string;
+  playing?: boolean;
   onPress?(): void;
   onLongPress?(): void;
 }
 
-const PodcastCard: FC<Props> = ({poster, title, onLongPress, onPress}) => {
+const PodcastCard: FC<Props> = ({
+  poster,
+  title,
+  playing = false,
+  onLongPress,
+  onPress,
+}) => {
   return (
     <Pressable
       style={styles.lastestPodcast}
       onPress={onPress}
       onLongPress={onLongPress}>
-      <Image
-        style={styles.poster}
-        source={
-          poster
-            ? {
-                uri: poster,
-              }
-            : require('../assets/images/DummyPoster.png')
-        }
-      />
+      <View>
+        <Image
+          style={styles.poster}
+          source={
+            poster
+              ? {
+                  uri: poster,
+                }
+              : require('../assets/images/DummyPoster.png')
+          }
+        />
+        <PlayingAudioAnimation visible={playing} />
+      </View>
+
       <Text numberOfLines={2} ellipsizeMode="tail" style={styles.title}>
         {title}
       </Text>
