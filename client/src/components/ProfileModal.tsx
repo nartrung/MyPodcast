@@ -117,7 +117,7 @@ const ProfileModal: FC<Props> = ({visibility, onRequestClose}) => {
           <Text style={{color: colors.CONTRAST, fontFamily: 'opensans_bold'}}>
             Chỉnh sửa hồ sơ
           </Text>
-          <Pressable onPress={handleSubmit}>
+          <Pressable onPress={handleSubmit} style={{flexDirection: 'row'}}>
             {!isSameProfile ? (
               <Text
                 style={{color: colors.PRIMARY, fontFamily: 'opensans_bold'}}>
