@@ -1,4 +1,4 @@
-import {FC} from 'react';
+import {FC, useEffect} from 'react';
 import {View, StyleSheet, Text, Settings} from 'react-native';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import Favorites from './profile/Favorites';
@@ -7,19 +7,29 @@ import Uploads from './profile/Uploads';
 import Histories from './profile/Histories';
 import Setting from './profile/Setting';
 import colors from '@utils/colors';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import ProfileSection from '@components/ProfileSection';
-import {getAuthState} from 'src/store/auth';
+import {UserProfile, getAuthState, updateProfile} from 'src/store/auth';
 import {RootState} from 'src/store';
+import {FetchProfile} from 'src/hooks/query';
 
 const Tab = createMaterialTopTabNavigator();
 
 interface Props {}
 
 const Profile: FC<Props> = props => {
+  const dispatch = useDispatch();
+  let {data} = FetchProfile();
+
   const profile = useSelector(
     (rootState: RootState) => getAuthState(rootState).profile,
   );
+
+  setTimeout(() => {
+    if (data && profile == null) dispatch(updateProfile(data));
+  }, 10);
+  useEffect(() => {}, [profile]);
+
   return (
     <View style={styles.container}>
       <ProfileSection profile={profile} />

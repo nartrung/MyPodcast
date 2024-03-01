@@ -95,6 +95,8 @@ const ProfileModal: FC<Props> = ({visibility, onRequestClose}) => {
         text1: 'Thay đổi thông tin thành công',
       });
     } catch (error) {
+      console.log(error);
+
       if (error instanceof AxiosError)
         Toast.show({
           type: 'error',
