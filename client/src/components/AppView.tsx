@@ -12,7 +12,7 @@ const AppView: FC<Props> = ({children}) => {
   return (
     <View style={styles.container}>
       <View style={styles.children}>{children}</View>
-      <View style={{alignItems: 'center'}}>
+      <View style={{marginHorizontal: 5}}>
         {isPlayerReady && <MiniAudioPlayer />}
       </View>
     </View>
