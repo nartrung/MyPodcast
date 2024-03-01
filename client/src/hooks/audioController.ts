@@ -6,7 +6,12 @@ import TrackPlayer, {
 import {AudioData} from './query';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from 'src/store';
-import {getPlayerState, updateOnGoingAudio} from 'src/store/player';
+import {
+  getPlayerState,
+  updateOnGoingAudio,
+  updateOnGoingList,
+} from 'src/store/player';
+import deepEqual from 'deep-equal';
 
 const updateQueue = async (data: AudioData[]) => {
   const list: Track[] = data.map(item => {
@@ -28,10 +33,17 @@ const audioController = () => {
   const onGoingAudio = useSelector(
     (rootState: RootState) => getPlayerState(rootState).onGoingAudio,
   );
+  const onGoingList = useSelector(
+    (rootState: RootState) => getPlayerState(rootState).onGoingList,
+  );
   const dispatch = useDispatch();
-  const isPlayerReady = playbackState !== State.None;
-  const isPalying = playbackState === State.Playing;
+  const isPlayerReady =
+    playbackState !== State.None && playbackState != undefined;
+  const isPlaying = playbackState === State.Playing;
   const isPaused = playbackState === State.Paused;
+  const isBusy =
+    playbackState === State.Buffering || playbackState === State.Loading;
+
   const audioPress = async (item: AudioData, data: AudioData[]) => {
     if (!isPlayerReady) {
       await updateQueue(data);
@@ -39,15 +51,41 @@ const audioController = () => {
       await TrackPlayer.skip(index);
       await TrackPlayer.play();
       dispatch(updateOnGoingAudio(item));
+      return dispatch(updateOnGoingList(data));
     }
-    if (isPalying && onGoingAudio?.id === item.id) {
-      await TrackPlayer.pause();
-    }
-    if (isPaused && onGoingAudio?.id === item.id) {
+    if (isPlaying && onGoingAudio?.id === item.id) {
+      await TrackPlayer.reset();
+      await updateQueue(data);
+      dispatch(updateOnGoingList(data));
+      const index = data.findIndex(audio => audio.id === item.id);
+      await TrackPlayer.skip(index);
       await TrackPlayer.play();
     }
+    if (isPaused && onGoingAudio?.id === item.id) {
+      return await TrackPlayer.play();
+    }
+    if (onGoingAudio?.id !== item.id) {
+      const isSameList = deepEqual(onGoingList, data);
+      await TrackPlayer.pause();
+      const index = data.findIndex(audio => audio.id === item.id);
+
+      if (!isSameList) {
+        await TrackPlayer.reset();
+        await updateQueue(data);
+        dispatch(updateOnGoingList(data));
+      }
+
+      await TrackPlayer.skip(index);
+      await TrackPlayer.play();
+      dispatch(updateOnGoingAudio(item));
+    }
   };
-  return {audioPress};
+
+  const togglePlayPause = async () => {
+    if (isPlaying) return await TrackPlayer.pause();
+    if (isPaused) return await TrackPlayer.play();
+  };
+  return {audioPress, togglePlayPause, isPlayerReady, isPlaying, isBusy};
 };
 
 export default audioController;

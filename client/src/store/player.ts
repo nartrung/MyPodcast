@@ -4,10 +4,12 @@ import {AudioData} from 'src/hooks/query';
 
 interface Player {
   onGoingAudio: AudioData | null;
+  onGoingList: AudioData[];
 }
 
 const initialState: Player = {
   onGoingAudio: null,
+  onGoingList: [],
 };
 
 const slice = createSlice({
@@ -20,10 +22,13 @@ const slice = createSlice({
     ) {
       playerState.onGoingAudio = payload;
     },
+    updateOnGoingList(playerState, {payload}: PayloadAction<AudioData[]>) {
+      playerState.onGoingList = payload;
+    },
   },
 });
 
-export const {updateOnGoingAudio} = slice.actions;
+export const {updateOnGoingAudio, updateOnGoingList} = slice.actions;
 
 export const getPlayerState = (state: RootState) => state.player;
 

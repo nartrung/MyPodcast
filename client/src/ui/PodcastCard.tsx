@@ -1,7 +1,6 @@
 import colors from '@utils/colors';
 import {FC} from 'react';
 import {StyleSheet, Pressable, Image, Text, View} from 'react-native';
-import PlayingAudioAnimation from './PlayingAudioAnimation';
 
 interface Props {
   poster?: string;
@@ -34,7 +33,6 @@ const PodcastCard: FC<Props> = ({
               : require('../assets/images/DummyPoster.png')
           }
         />
-        <PlayingAudioAnimation visible={playing} />
       </View>
 
       <Text numberOfLines={2} ellipsizeMode="tail" style={styles.title}>
