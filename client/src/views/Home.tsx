@@ -140,7 +140,7 @@ const Home: FC<Props> = props => {
   }, []);
   return (
     <AppView>
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <ScrollView
           scrollEnabled={false}
           style={styles.heading}

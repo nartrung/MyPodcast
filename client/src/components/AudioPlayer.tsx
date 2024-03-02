@@ -2,7 +2,7 @@ import AppLink from '@ui/AppLink';
 import AppModal from '@ui/AppModal';
 import colors from '@utils/colors';
 import {FC} from 'react';
-import {View, StyleSheet, Image, Text, Pressable} from 'react-native';
+import {View, StyleSheet, Image, Text} from 'react-native';
 import {useProgress} from 'react-native-track-player';
 import {useSelector} from 'react-redux';
 import {RootState} from 'src/store';
@@ -61,7 +61,9 @@ const AudioPlayer: FC<Props> = ({visible, onRequestClose}) => {
   return (
     <AppModal animation visible={visible} onRequestClose={onRequestClose}>
       <View style={styles.container}>
-        <Image source={source} style={styles.poster} />
+        <View style={{alignItems: 'center'}}>
+          <Image source={source} style={styles.poster} />
+        </View>
         <View style={styles.contentContainer}>
           <Text numberOfLines={1} style={styles.title}>
             {onGoingAudio?.title}
@@ -92,7 +94,7 @@ const AudioPlayer: FC<Props> = ({visible, onRequestClose}) => {
             <FontAwesome6Icon
               style={styles.icon}
               name="rotate-left"
-              size={24}
+              size={28}
             />
           </PlayerControllerIcon>
           {isBusy ? (
@@ -108,7 +110,7 @@ const AudioPlayer: FC<Props> = ({visible, onRequestClose}) => {
             <FontAwesome6Icon
               style={styles.icon}
               name="rotate-right"
-              size={24}
+              size={28}
             />
           </PlayerControllerIcon>
           <PlayerControllerIcon onPress={() => handleSkipToNext()}>
@@ -123,7 +125,6 @@ const AudioPlayer: FC<Props> = ({visible, onRequestClose}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
     backgroundColor: colors.THIRD,
   },
   contentContainer: {
@@ -136,7 +137,7 @@ const styles = StyleSheet.create({
     marginLeft: 18,
   },
   poster: {
-    marginVertical: 80,
+    marginVertical: 40,
     width: 225,
     height: 225,
     borderRadius: 8,
