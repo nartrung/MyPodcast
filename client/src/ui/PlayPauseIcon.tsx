@@ -17,9 +17,9 @@ const PlayPauseIcon: FC<Props> = ({
   return (
     <Pressable style={styles.icon} onPress={onPress}>
       {playing ? (
-        <AntDesign name="pause" size={28} color={color} />
+        <AntDesign name="pause" size={32} color={color} />
       ) : (
-        <AntDesign name="caretright" size={28} color={color} />
+        <AntDesign name="caretright" size={32} color={color} />
       )}
     </Pressable>
   );

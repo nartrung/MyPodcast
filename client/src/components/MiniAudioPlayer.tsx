@@ -2,13 +2,14 @@ import Loader from '@ui/Loader';
 import PlayPauseIcon from '@ui/PlayPauseIcon';
 import colors from '@utils/colors';
 import {mapRange} from '@utils/math';
-import {FC} from 'react';
+import {FC, useState} from 'react';
 import {View, StyleSheet, Image, Text, Pressable} from 'react-native';
 import {useProgress} from 'react-native-track-player';
 import {useSelector} from 'react-redux';
 import audioController from 'src/hooks/audioController';
 import {RootState} from 'src/store';
 import {getPlayerState} from 'src/store/player';
+import AudioPlayer from './AudioPlayer';
 
 interface Props {}
 
@@ -24,16 +25,24 @@ const MiniAudioPlayer: FC<Props> = props => {
   const source = poster
     ? {uri: poster}
     : require('../assets/images/DummyPoster.png');
+
+  const [showAudioPlayer, setShowAudioPlayer] = useState(false);
+  const closeAudioPlayer = () => {
+    setShowAudioPlayer(false);
+  };
+  const openAudioPlayer = () => {
+    setShowAudioPlayer(true);
+  };
   return (
     <>
       <View style={styles.container}>
         <Image source={source} style={styles.poster} />
-        <View style={styles.contentContainer}>
+        <Pressable onPress={openAudioPlayer} style={styles.contentContainer}>
           <Text style={styles.title} numberOfLines={1}>
             {onGoingAudio?.title}
           </Text>
           <Text style={styles.owner}>{onGoingAudio?.owner}</Text>
-        </View>
+        </Pressable>
         {isBusy ? (
           <Loader />
         ) : (
@@ -55,6 +64,10 @@ const MiniAudioPlayer: FC<Props> = props => {
           }}
         />
       </View>
+      <AudioPlayer
+        visible={showAudioPlayer}
+        onRequestClose={closeAudioPlayer}
+      />
     </>
   );
 };
@@ -82,13 +95,13 @@ const styles = StyleSheet.create({
   },
   title: {
     fontFamily: 'opensans_bold',
-    color: colors.CONTRAST,
+    color: colors.CONTRAST_OVERLAY,
     paddingHorizontal: 10,
   },
   owner: {
     fontFamily: 'opensans_bold',
     fontSize: 11,
-    color: colors.CONTRAST,
+    color: colors.CONTRAST_OVERLAY,
     paddingHorizontal: 10,
   },
 });

@@ -59,7 +59,7 @@ const audioController = () => {
       dispatch(updateOnGoingList(data));
       const index = data.findIndex(audio => audio.id === item.id);
       await TrackPlayer.skip(index);
-      await TrackPlayer.play();
+      return await TrackPlayer.play();
     }
     if (isPaused && onGoingAudio?.id === item.id) {
       return await TrackPlayer.play();
@@ -77,15 +77,59 @@ const audioController = () => {
 
       await TrackPlayer.skip(index);
       await TrackPlayer.play();
-      dispatch(updateOnGoingAudio(item));
+      return dispatch(updateOnGoingAudio(item));
     }
   };
 
   const togglePlayPause = async () => {
     if (isPlaying) return await TrackPlayer.pause();
-    if (isPaused) return await TrackPlayer.play();
+    if (isPaused || isPlayerReady) return await TrackPlayer.play();
   };
-  return {audioPress, togglePlayPause, isPlayerReady, isPlaying, isBusy};
+
+  const seekPositionTo = async (position: number) => {
+    await TrackPlayer.seekTo(position);
+  };
+
+  const skipTo = async (sec: number) => {
+    const currentPosition = await TrackPlayer.getProgress().then(
+      progress => progress.position,
+    );
+    await TrackPlayer.seekTo(currentPosition + sec);
+  };
+
+  const skipToNext = async () => {
+    const currentList = await TrackPlayer.getQueue();
+    const currentIndex = await TrackPlayer.getActiveTrackIndex();
+    if (currentIndex === undefined) return;
+    const nextIndex = currentIndex + 1;
+    const nextAudio = currentList[nextIndex];
+    if (nextAudio) {
+      await TrackPlayer.skipToNext();
+      dispatch(updateOnGoingAudio(onGoingList[nextIndex]));
+    }
+  };
+  const skipToPrevious = async () => {
+    const currentList = await TrackPlayer.getQueue();
+    const currentIndex = await TrackPlayer.getActiveTrackIndex();
+    if (currentIndex === undefined) return;
+    const nextIndex = currentIndex - 1;
+    const nextAudio = currentList[nextIndex];
+    if (nextAudio) {
+      await TrackPlayer.skipToPrevious();
+      dispatch(updateOnGoingAudio(onGoingList[nextIndex]));
+    }
+  };
+  return {
+    audioPress,
+    togglePlayPause,
+    seekPositionTo,
+    skipTo,
+    skipToNext,
+    skipToPrevious,
+    isPlayerReady,
+    isPlaying,
+    isBusy,
+  };
 };
 
 export default audioController;
