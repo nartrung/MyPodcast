@@ -22,7 +22,7 @@ interface Props {
 
 const {height} = Dimensions.get('window');
 
-const modalHeight = height - 100;
+const modalHeight = height * 0.7;
 
 const AppModal: FC<Props> = ({
   children,
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0 0 0 / 0.4)',
   },
   modal: {
-    backgroundColor: colors.PRIMARY,
+    backgroundColor: colors.THIRD,
     height: modalHeight,
     position: 'absolute',
     bottom: 0,
