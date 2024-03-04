@@ -2,6 +2,8 @@ import TrackPlayer, {
   Track,
   usePlaybackState,
   State,
+  AppKilledPlaybackBehavior,
+  Capability,
 } from 'react-native-track-player';
 import {AudioData} from './query';
 import {useDispatch, useSelector} from 'react-redux';
@@ -12,6 +14,9 @@ import {
   updateOnGoingList,
 } from 'src/store/player';
 import deepEqual from 'deep-equal';
+import {useEffect} from 'react';
+
+let isReady = false;
 
 const updateQueue = async (data: AudioData[]) => {
   const list: Track[] = data.map(item => {
@@ -119,6 +124,33 @@ const audioController = () => {
       dispatch(updateOnGoingAudio(onGoingList[nextIndex]));
     }
   };
+
+  useEffect(() => {
+    const setupPlayer = async () => {
+      if (isReady) return;
+      await TrackPlayer.setupPlayer();
+      await TrackPlayer.updateOptions({
+        android: {
+          appKilledPlaybackBehavior:
+            AppKilledPlaybackBehavior.StopPlaybackAndRemoveNotification,
+        },
+        capabilities: [
+          Capability.Play,
+          Capability.Pause,
+          Capability.SkipToNext,
+          Capability.SkipToPrevious,
+        ],
+        compactCapabilities: [
+          Capability.Play,
+          Capability.Pause,
+          Capability.SkipToNext,
+          Capability.SkipToPrevious,
+        ],
+      });
+    };
+    setupPlayer();
+    isReady = true;
+  }, []);
   return {
     audioPress,
     togglePlayPause,

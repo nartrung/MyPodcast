@@ -1,12 +1,5 @@
-import {FC, useEffect, useState} from 'react';
-import {
-  View,
-  StyleSheet,
-  Text,
-  Image,
-  ScrollView,
-  Pressable,
-} from 'react-native';
+import {FC, useState} from 'react';
+import {StyleSheet, Text, Image, ScrollView, Pressable} from 'react-native';
 import LastestPodcast from '@components/LastestPodcast';
 import colors from '@utils/colors';
 import RecommendPodcast from '@components/RecommendPodcast';
@@ -132,12 +125,6 @@ const Home: FC<Props> = props => {
     }
   };
 
-  useEffect(() => {
-    const setupPlayer = async () => {
-      await TrackPlayer.setupPlayer();
-    };
-    setupPlayer();
-  }, []);
   return (
     <AppView>
       <ScrollView showsVerticalScrollIndicator={false}>
