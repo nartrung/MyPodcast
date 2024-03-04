@@ -27,7 +27,7 @@ const AudioInfoContainer: FC<Props> = ({visible, closeHandler}) => {
         <Text></Text>
 
         <Pressable onPress={handleClose}>
-          <AntDesign name="close" size={24} />
+          <AntDesign name="close" size={24} color={colors.PRIMARY} />
         </Pressable>
       </View>
 
@@ -36,11 +36,13 @@ const AudioInfoContainer: FC<Props> = ({visible, closeHandler}) => {
           {onGoingAudio?.title}
         </Text>
         <View style={{flexDirection: 'row', marginVertical: 10}}>
-          <Text>Tác giả: </Text>
+          <Text style={styles.bold}>Tác giả: </Text>
           <AppLink title={onGoingAudio?.owner || ''} />
         </View>
-        <Text>Mô tả:</Text>
-        <Text style={styles.desc}>{onGoingAudio?.about}</Text>
+        <Text style={styles.bold}>Mô tả:</Text>
+        <View style={styles.descContainer}>
+          <Text style={styles.desc}>{onGoingAudio?.about}</Text>
+        </View>
       </ScrollView>
     </View>
   );
@@ -59,10 +61,20 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: colors.PRIMARY,
   },
+  descContainer: {
+    backgroundColor: colors.PRIMARY_OVERLAY,
+    padding: 5,
+    borderRadius: 8,
+    marginVertical: 5,
+  },
   desc: {
     fontFamily: 'opensans_regular',
     fontSize: 14,
     textAlign: 'justify',
+    color: colors.CONTRAST,
+  },
+  bold: {
+    fontFamily: 'opensans_bold',
     color: colors.CONTRAST,
   },
 });
