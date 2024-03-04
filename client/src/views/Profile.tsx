@@ -9,9 +9,10 @@ import Setting from './profile/Setting';
 import colors from '@utils/colors';
 import {useDispatch, useSelector} from 'react-redux';
 import ProfileSection from '@components/ProfileSection';
-import {UserProfile, getAuthState, updateProfile} from 'src/store/auth';
+import {getAuthState, updateProfile} from 'src/store/auth';
 import {RootState} from 'src/store';
 import {FetchProfile} from 'src/hooks/query';
+import AppView from '@components/AppView';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -31,36 +32,38 @@ const Profile: FC<Props> = props => {
   useEffect(() => {}, [profile]);
 
   return (
-    <View style={styles.container}>
-      <ProfileSection profile={profile} />
-      <Tab.Navigator
-        screenOptions={({route}) => ({
-          tabBarLabel: ({focused}) => {
-            return (
-              <View
-                style={{
-                  alignItems: 'center',
-                }}>
-                <Text
+    <AppView>
+      <View style={styles.container}>
+        <ProfileSection profile={profile} />
+        <Tab.Navigator
+          screenOptions={({route}) => ({
+            tabBarLabel: ({focused}) => {
+              return (
+                <View
                   style={{
-                    fontFamily: 'opensans_bold',
-                    fontSize: 12,
-                    color: focused ? colors.PRIMARY : colors.CONTRAST,
+                    alignItems: 'center',
                   }}>
-                  {route.name}
-                </Text>
-              </View>
-            );
-          },
-          tabBarIndicatorStyle: styles.indicator,
-        })}>
-        <Tab.Screen name="Yêu thích" component={Favorites} />
-        <Tab.Screen name="Playlist" component={Playlists} />
-        <Tab.Screen name="Đăng tải" component={Uploads} />
-        <Tab.Screen name="Lịch sử" component={Histories} />
-        <Tab.Screen name="Cài đặt" component={Setting} />
-      </Tab.Navigator>
-    </View>
+                  <Text
+                    style={{
+                      fontFamily: 'opensans_bold',
+                      fontSize: 12,
+                      color: focused ? colors.PRIMARY : colors.CONTRAST,
+                    }}>
+                    {route.name}
+                  </Text>
+                </View>
+              );
+            },
+            tabBarIndicatorStyle: styles.indicator,
+          })}>
+          <Tab.Screen name="Yêu thích" component={Favorites} />
+          <Tab.Screen name="Playlist" component={Playlists} />
+          <Tab.Screen name="Đăng tải" component={Uploads} />
+          <Tab.Screen name="Lịch sử" component={Histories} />
+          <Tab.Screen name="Cài đặt" component={Setting} />
+        </Tab.Navigator>
+      </View>
+    </AppView>
   );
 };
 

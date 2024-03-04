@@ -35,6 +35,32 @@ export const FetchLastestPodcast = () => {
   });
 };
 
+const fetchRecentPlayPodcast = async (): Promise<AudioData[]> => {
+  const token = await getDataFromAsyncStorage(keys.AUTH_TOKEN);
+  const {data} = await axios.get(
+    'http://10.0.2.2:8080/history/recently-played',
+    {
+      headers: {
+        Authorization: 'Bearer ' + token,
+        'Content-Type': 'multipart/form-data;',
+      },
+    },
+  );
+  return data.audios;
+};
+
+export const FetchRecentPlayPodcast = () => {
+  return useQuery(['recent-play'], {
+    queryFn: () => fetchRecentPlayPodcast(),
+    onError(err) {
+      Toast.show({
+        type: 'error',
+        text1: 'Có lỗi trong quá trình tải',
+      });
+    },
+  });
+};
+
 const fetchRecommendPodcast = async (): Promise<AudioData[]> => {
   const token = await getDataFromAsyncStorage(keys.AUTH_TOKEN);
   const {data} = await axios.get('http://10.0.2.2:8080/profile/recommended', {

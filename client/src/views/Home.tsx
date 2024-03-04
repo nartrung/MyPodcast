@@ -8,7 +8,7 @@ import {
   View,
   RefreshControl,
 } from 'react-native';
-import LastestPodcast from '@components/LastestPodcast';
+import LastestAndRecentPodcast from '@components/LastestAndRecentPodcast';
 import colors from '@utils/colors';
 import RecommendPodcast from '@components/RecommendPodcast';
 import OptionsModal from '@components/OptionsModal';
@@ -158,6 +158,9 @@ const Home: FC<Props> = props => {
                 queryClient.invalidateQueries({
                   queryKey: ['recommend-podcast'],
                 });
+                queryClient.invalidateQueries({
+                  queryKey: ['recent-play'],
+                });
               }}
             />
           }
@@ -169,7 +172,7 @@ const Home: FC<Props> = props => {
             />
             <Text style={styles.headingTitle}>Nghe ngay</Text>
           </View>
-          <LastestPodcast
+          <LastestAndRecentPodcast
             onPodcastLongPress={item => {
               setShowOptions(true);
               setSelectedPodcast(item);

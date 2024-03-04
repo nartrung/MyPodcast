@@ -220,6 +220,7 @@ export const getRecentlyPlayed: RequestHandler = async (req, res) => {
         poster: "$audioInfo.poster.url",
         category: "$audioInfo.category.url",
         owner: "$owner.name",
+        ownerId: "$owner._id",
         date: "$histories.date",
         progress: "$histories.progress",
       },
