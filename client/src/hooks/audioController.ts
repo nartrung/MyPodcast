@@ -117,11 +117,11 @@ const audioController = () => {
     const currentList = await TrackPlayer.getQueue();
     const currentIndex = await TrackPlayer.getActiveTrackIndex();
     if (currentIndex === undefined) return;
-    const nextIndex = currentIndex - 1;
-    const nextAudio = currentList[nextIndex];
+    const preIndex = currentIndex - 1;
+    const nextAudio = currentList[preIndex];
     if (nextAudio) {
       await TrackPlayer.skipToPrevious();
-      dispatch(updateOnGoingAudio(onGoingList[nextIndex]));
+      dispatch(updateOnGoingAudio(onGoingList[preIndex]));
     }
   };
 
