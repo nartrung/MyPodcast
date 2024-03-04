@@ -3,7 +3,7 @@ import Toast from 'react-native-toast-message';
 import {useQuery} from 'react-query';
 import {categoriesTypes} from '@utils/categories';
 import {getDataFromAsyncStorage, keys} from '@utils/asyncStorage';
-import {Playlist} from 'src/@type/playlist';
+import {History, Playlist} from 'src/@type/playlist';
 import {UserProfile} from 'src/store/auth';
 
 export interface AudioData {
@@ -144,6 +144,29 @@ const fetchProfile = async (): Promise<UserProfile> => {
 export const FetchProfile = () => {
   return useQuery(['profile'], {
     queryFn: () => fetchProfile(),
+    onError(err) {
+      Toast.show({
+        type: 'error',
+        text1: 'Có lỗi trong quá trình tải',
+      });
+    },
+  });
+};
+
+const fetchHistories = async (): Promise<History[]> => {
+  const token = await getDataFromAsyncStorage(keys.AUTH_TOKEN);
+  const {data} = await axios.get('http://10.0.2.2:8080/history/', {
+    headers: {
+      Authorization: 'Bearer ' + token,
+      'Content-Type': 'multipart/form-data;',
+    },
+  });
+  return data.histories;
+};
+
+export const FetchHistories = () => {
+  return useQuery(['histories'], {
+    queryFn: () => fetchHistories(),
     onError(err) {
       Toast.show({
         type: 'error',
