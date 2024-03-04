@@ -1,4 +1,4 @@
-import {FC, useState} from 'react';
+import {FC, useState, createContext, useContext} from 'react';
 import {StyleSheet, Text, Image, ScrollView, Pressable} from 'react-native';
 import LastestPodcast from '@components/LastestPodcast';
 import colors from '@utils/colors';
@@ -12,12 +12,15 @@ import Toast from 'react-native-toast-message';
 import PlaylistModal from '@components/PlaylistModal';
 import CreatePlaylistModal from '@components/CreatePlaylistModal';
 import {Playlist} from 'src/@type/playlist';
-import TrackPlayer from 'react-native-track-player';
 import audioController from 'src/hooks/audioController';
 import AppView from '@components/AppView';
 
 interface Props {}
 
+export const PlayerContext = createContext({
+  setShowOptions: (show: boolean) => {},
+  setSelectedPodcast: (selected: AudioData) => {},
+});
 const Home: FC<Props> = props => {
   const [showOptions, setShowOptions] = useState(false);
   const [showPlaylists, setShowPlaylists] = useState(false);
@@ -126,83 +129,93 @@ const Home: FC<Props> = props => {
   };
 
   return (
-    <AppView>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <ScrollView
-          scrollEnabled={false}
-          style={styles.heading}
-          horizontal
-          showsHorizontalScrollIndicator={false}>
-          <Image
-            style={styles.headingImage}
-            source={require('../assets/images/DummyAvatar.png')}
+    <PlayerContext.Provider
+      value={{
+        setShowOptions: (show: boolean) => setShowOptions(show),
+        setSelectedPodcast: (selected: AudioData) =>
+          setSelectedPodcast(selected),
+      }}>
+      <AppView>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <ScrollView
+            scrollEnabled={false}
+            style={styles.heading}
+            horizontal
+            showsHorizontalScrollIndicator={false}>
+            <Image
+              style={styles.headingImage}
+              source={require('../assets/images/DummyAvatar.png')}
+            />
+            <Text style={styles.headingTitle}>Nghe ngay</Text>
+          </ScrollView>
+          <LastestPodcast
+            onPodcastLongPress={item => {
+              setShowOptions(true);
+              setSelectedPodcast(item);
+            }}
+            onPodcastPress={audioPress}
           />
-          <Text style={styles.headingTitle}>Nghe ngay</Text>
+          <RecommendPodcast
+            onPodcastLongPress={item => {
+              setShowOptions(true);
+              setSelectedPodcast(item);
+            }}
+            onPodcastPress={audioPress}
+          />
+          <OptionsModal
+            visible={showOptions}
+            onRequestClose={() => {
+              setShowOptions(false);
+            }}
+            options={[
+              {
+                title: 'Thêm vào Danh sách yêu thích',
+                icon: 'cards-heart-outline',
+                onPress: handleAddFav,
+              },
+              {
+                title: 'Thêm vào Playlist',
+                icon: 'playlist-music',
+                onPress: handleAddPlaylist,
+              },
+            ]}
+            poster={selectedPodcast?.poster}
+            title={selectedPodcast?.title}
+            renderItem={item => {
+              return (
+                <Pressable onPress={item.onPress} style={styles.options}>
+                  <MaterialComIcons
+                    name={item.icon}
+                    style={styles.optionsIcon}
+                  />
+                  <Text style={styles.optionsTitle}>{item.title}</Text>
+                </Pressable>
+              );
+            }}
+          />
+          <PlaylistModal
+            onAddToPlaylistPress={handleUpdatePlaylist}
+            onCreatePlaylistPress={() => {
+              setShowCreatePlaylists(true);
+              setShowPlaylists(false);
+            }}
+            visible={showPlaylists}
+            onRequestClose={() => {
+              setShowPlaylists(false);
+            }}
+            list={data || []}
+          />
+          <CreatePlaylistModal
+            visible={showCreatePlaylists}
+            onRequestClose={() => {
+              setShowCreatePlaylists(false);
+              setShowPlaylists(true);
+            }}
+            onSubmitCreatePlaylist={handleSubmitCreatePlaylist}
+          />
         </ScrollView>
-        <LastestPodcast
-          onPodcastLongPress={item => {
-            setShowOptions(true);
-            setSelectedPodcast(item);
-          }}
-          onPodcastPress={audioPress}
-        />
-        <RecommendPodcast
-          onPodcastLongPress={item => {
-            setShowOptions(true);
-            setSelectedPodcast(item);
-          }}
-          onPodcastPress={audioPress}
-        />
-        <OptionsModal
-          visible={showOptions}
-          onRequestClose={() => {
-            setShowOptions(false);
-          }}
-          options={[
-            {
-              title: 'Thêm vào Danh sách yêu thích',
-              icon: 'cards-heart-outline',
-              onPress: handleAddFav,
-            },
-            {
-              title: 'Thêm vào Playlist',
-              icon: 'playlist-music',
-              onPress: handleAddPlaylist,
-            },
-          ]}
-          poster={selectedPodcast?.poster}
-          title={selectedPodcast?.title}
-          renderItem={item => {
-            return (
-              <Pressable onPress={item.onPress} style={styles.options}>
-                <MaterialComIcons name={item.icon} style={styles.optionsIcon} />
-                <Text style={styles.optionsTitle}>{item.title}</Text>
-              </Pressable>
-            );
-          }}
-        />
-        <PlaylistModal
-          onAddToPlaylistPress={handleUpdatePlaylist}
-          onCreatePlaylistPress={() => {
-            setShowCreatePlaylists(true);
-            setShowPlaylists(false);
-          }}
-          visible={showPlaylists}
-          onRequestClose={() => {
-            setShowPlaylists(false);
-          }}
-          list={data || []}
-        />
-        <CreatePlaylistModal
-          visible={showCreatePlaylists}
-          onRequestClose={() => {
-            setShowCreatePlaylists(false);
-            setShowPlaylists(true);
-          }}
-          onSubmitCreatePlaylist={handleSubmitCreatePlaylist}
-        />
-      </ScrollView>
-    </AppView>
+      </AppView>
+    </PlayerContext.Provider>
   );
 };
 
