@@ -2,7 +2,14 @@ import AudioLoadingUI from '@ui/AudioLoadingUI';
 import LoadingAnimation from '@ui/LoadingAnimation';
 import colors from '@utils/colors';
 import {FC, useState} from 'react';
-import {View, StyleSheet, ScrollView, Pressable, Alert} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  Pressable,
+  Alert,
+  RefreshControl,
+} from 'react-native';
 import {Text} from 'react-native';
 import {FetchHistories} from 'src/hooks/query';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -16,7 +23,7 @@ interface Props {}
 
 const Histories: FC<Props> = props => {
   const [busy, setBusy] = useState(false);
-  const {data, isLoading} = FetchHistories();
+  const {data, isLoading, isFetching} = FetchHistories();
   const queryClient = useQueryClient();
 
   const clearHistory = async () => {
@@ -94,7 +101,16 @@ const Histories: FC<Props> = props => {
       </LoadingAnimation>
     );
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      refreshControl={
+        <RefreshControl
+          refreshing={isFetching}
+          onRefresh={() => {
+            queryClient.invalidateQueries({queryKey: ['histories']});
+          }}
+        />
+      }
+      style={styles.container}>
       <View style={styles.titleAndDel}>
         <Text style={styles.sectionTitle}>Lịch sử nghe</Text>
         <Pressable onPress={handleClearAll}>

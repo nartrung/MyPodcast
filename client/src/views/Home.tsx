@@ -1,11 +1,19 @@
 import {FC, useState, createContext, useContext} from 'react';
-import {StyleSheet, Text, Image, ScrollView, Pressable} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  Image,
+  ScrollView,
+  Pressable,
+  View,
+  RefreshControl,
+} from 'react-native';
 import LastestPodcast from '@components/LastestPodcast';
 import colors from '@utils/colors';
 import RecommendPodcast from '@components/RecommendPodcast';
 import OptionsModal from '@components/OptionsModal';
 import MaterialComIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {AudioData, FetchPlaylist} from 'src/hooks/query';
+import {AudioData, FetchPlaylist, FetchRecommendPodcast} from 'src/hooks/query';
 import axios from 'axios';
 import {getDataFromAsyncStorage, keys} from '@utils/asyncStorage';
 import Toast from 'react-native-toast-message';
@@ -29,6 +37,7 @@ const Home: FC<Props> = props => {
   const [selectedPodcast, setSelectedPodcast] = useState<AudioData>();
   const {audioPress} = audioController();
   const {data} = FetchPlaylist();
+  const {isFetching} = FetchRecommendPodcast();
   const queryClient = useQueryClient();
 
   const handleAddFav = async () => {
@@ -141,18 +150,25 @@ const Home: FC<Props> = props => {
           setSelectedPodcast(selected),
       }}>
       <AppView>
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <ScrollView
-            scrollEnabled={false}
-            style={styles.heading}
-            horizontal
-            showsHorizontalScrollIndicator={false}>
+        <ScrollView
+          refreshControl={
+            <RefreshControl
+              refreshing={isFetching}
+              onRefresh={() => {
+                queryClient.invalidateQueries({
+                  queryKey: ['recommend-podcast'],
+                });
+              }}
+            />
+          }
+          showsVerticalScrollIndicator={false}>
+          <View style={styles.heading}>
             <Image
               style={styles.headingImage}
-              source={require('../assets/images/DummyAvatar.png')}
+              source={require('../assets/images/MyPodcastLogo.png')}
             />
             <Text style={styles.headingTitle}>Nghe ngay</Text>
-          </ScrollView>
+          </View>
           <LastestPodcast
             onPodcastLongPress={item => {
               setShowOptions(true);
@@ -227,10 +243,11 @@ const Home: FC<Props> = props => {
 const styles = StyleSheet.create({
   heading: {
     height: 60,
+    flexDirection: 'row',
   },
   headingImage: {
     height: 40,
-    aspectRatio: 1,
+    width: 40,
     borderRadius: 20,
     marginLeft: 24,
     marginTop: 10,
