@@ -14,6 +14,7 @@ import CreatePlaylistModal from '@components/CreatePlaylistModal';
 import {Playlist} from 'src/@type/playlist';
 import audioController from 'src/hooks/audioController';
 import AppView from '@components/AppView';
+import {useQueryClient} from 'react-query';
 
 interface Props {}
 
@@ -28,6 +29,7 @@ const Home: FC<Props> = props => {
   const [selectedPodcast, setSelectedPodcast] = useState<AudioData>();
   const {audioPress} = audioController();
   const {data} = FetchPlaylist();
+  const queryClient = useQueryClient();
 
   const handleAddFav = async () => {
     if (!selectedPodcast) return;
@@ -42,6 +44,7 @@ const Home: FC<Props> = props => {
           },
         },
       );
+      queryClient.invalidateQueries({queryKey: ['favorites-podcast']});
       if (data) {
         Toast.show({
           type: 'success',
@@ -84,6 +87,7 @@ const Home: FC<Props> = props => {
           type: 'success',
           text1: 'Tạo playlist thành công',
         });
+        queryClient.invalidateQueries({queryKey: ['playlists']});
       } catch (error) {
         Toast.show({
           type: 'error',
@@ -119,6 +123,7 @@ const Home: FC<Props> = props => {
         type: 'success',
         text1: 'Thêm vào Playlist ' + item.title + ' thành công',
       });
+      queryClient.invalidateQueries({queryKey: ['playlists']});
     } catch (error) {
       console.log(error);
       Toast.show({
