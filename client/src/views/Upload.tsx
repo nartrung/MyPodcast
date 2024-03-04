@@ -3,6 +3,7 @@ import FileSelector from '@components/FileSelector';
 import Form from '@components/form/Form';
 import InputField from '@components/form/InputField';
 import SubmitButton from '@components/form/SubmitButton';
+import {NavigationProp, useNavigation} from '@react-navigation/native';
 import AppInput from '@ui/AppInput';
 import {getDataFromAsyncStorage, keys} from '@utils/asyncStorage';
 import colors from '@utils/colors';
@@ -16,10 +17,16 @@ import {
   Pressable,
   ScrollView,
   Alert,
+  Button,
 } from 'react-native';
 import {DocumentPickerResponse, types} from 'react-native-document-picker';
 import Toast from 'react-native-toast-message';
 import MaterialComIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import {useQueryClient} from 'react-query';
+import {useSelector} from 'react-redux';
+import {ProfileStackNavigitionScreen} from 'src/@type/navigation';
+import {RootState} from 'src/store';
+import {getAuthState} from 'src/store/auth';
 import * as yup from 'yup';
 
 interface Props {}
@@ -84,6 +91,7 @@ const Upload: FC<Props> = props => {
   const [podcastCategory, setPodcastCategory] = useState('Chọn thể loại');
   const [podcastFile, setPodcastFile] = useState<DocumentPickerResponse>();
   const [podcastPoster, setPodcastPoster] = useState<DocumentPickerResponse>();
+  const queryClient = useQueryClient();
   const handleSubmit = async (
     values: UploadForm,
     actions: FormikHelpers<UploadForm>,
@@ -123,6 +131,7 @@ const Upload: FC<Props> = props => {
         'Podcast đã được upload thành công, vui lòng chờ Admin phê duyệt',
         [{text: 'Đóng'}],
       );
+      queryClient.invalidateQueries({queryKey: ['uploaded-podcast']});
     } catch (error) {
       if (error instanceof yup.ValidationError) {
         Toast.show({
@@ -143,90 +152,115 @@ const Upload: FC<Props> = props => {
 
     actions.setSubmitting(false);
   };
-  return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.title}>Đăng tải Podcast</Text>
-      <View style={styles.fileSelector}>
-        <FileSelector
-          icon={
-            <MaterialComIcons
-              name="file-upload-outline"
-              size={32}
-              color={colors.PRIMARY}></MaterialComIcons>
-          }
-          btnTitle="Tải tệp âm thanh"
-          fileName={podcastFile?.name ?? undefined}
-          options={{type: [types.audio]}}
-          onSelect={file => {
-            setPodcastFile(file);
-          }}
-        />
-        <FileSelector
-          icon={
-            <MaterialComIcons
-              name="camera"
-              size={32}
-              color={colors.PRIMARY}></MaterialComIcons>
-          }
-          btnTitle="Tải ảnh đại diện"
-          fileName={podcastPoster?.name ?? undefined}
-          options={{type: [types.images]}}
-          onSelect={file => {
-            setPodcastPoster(file);
-          }}
-        />
-      </View>
-      <View>
-        <CategorySelector
-          visible={showCategoryModal}
-          onRequestClose={() => {
-            setShowCategoryModal(false);
-          }}
-          data={category}
-          renderItem={item => {
-            return <Text style={styles.category}>{item}</Text>;
-          }}
-          onSelect={item => {
-            setPodcastCategory(item);
-          }}
-        />
-      </View>
-      <View>
-        <Text style={styles.label}>Thể loại</Text>
-      </View>
-      <Pressable
-        onPress={() => {
-          setShowCategoryModal(true);
-        }}>
-        <View>
-          <AppInput editable={false} value={podcastCategory} />
-        </View>
-      </Pressable>
-      <Form
-        onSubmit={handleSubmit}
-        initialValues={initialValues}
-        validationSchema={UploadFileValidationSchema}>
-        <View style={styles.formContainer}>
-          <InputField
-            name="title"
-            placeholder="Tiêu đề"
-            label="Tiêu đề Podcast"
-          />
-          <InputField
-            name="desc"
-            placeholder="Mô tả"
-            label="Mô tả Podcast"
-            numberOfLines={6}
-            multinine={true}
-            textAlignVertical="top"
-          />
-          <View>
-            <SubmitButton title="Đăng tải" />
-          </View>
-        </View>
-      </Form>
-    </ScrollView>
+  const profile = useSelector(
+    (rootState: RootState) => getAuthState(rootState).profile,
   );
+  const navigation =
+    useNavigation<NavigationProp<ProfileStackNavigitionScreen>>();
+  if (!profile?.verified) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.title}>Đăng tải Podcast</Text>
+        <View style={styles.lockFeature}>
+          <Text style={styles.title}>Email chưa được xác thực</Text>
+          <Text style={styles.info}>
+            Vui lòng xác thực email của bạn để sử dụng tính năng Upload Podcast
+          </Text>
+          <Button
+            title="Đi đến trang xác thực"
+            color={colors.PRIMARY}
+            onPress={() => {
+              navigation.navigate('Profile');
+            }}></Button>
+        </View>
+      </View>
+    );
+  } else {
+    return (
+      <ScrollView style={styles.container}>
+        <Text style={styles.title}>Đăng tải Podcast</Text>
+        <View style={styles.fileSelector}>
+          <FileSelector
+            icon={
+              <MaterialComIcons
+                name="file-upload-outline"
+                size={32}
+                color={colors.PRIMARY}></MaterialComIcons>
+            }
+            btnTitle="Tải tệp âm thanh"
+            fileName={podcastFile?.name ?? undefined}
+            options={{type: [types.audio]}}
+            onSelect={file => {
+              setPodcastFile(file);
+            }}
+          />
+          <FileSelector
+            icon={
+              <MaterialComIcons
+                name="camera"
+                size={32}
+                color={colors.PRIMARY}></MaterialComIcons>
+            }
+            btnTitle="Tải ảnh đại diện"
+            fileName={podcastPoster?.name ?? undefined}
+            options={{type: [types.images]}}
+            onSelect={file => {
+              setPodcastPoster(file);
+            }}
+          />
+        </View>
+        <View>
+          <CategorySelector
+            visible={showCategoryModal}
+            onRequestClose={() => {
+              setShowCategoryModal(false);
+            }}
+            data={category}
+            renderItem={item => {
+              return <Text style={styles.category}>{item}</Text>;
+            }}
+            onSelect={item => {
+              setPodcastCategory(item);
+            }}
+          />
+        </View>
+        <View>
+          <Text style={styles.label}>Thể loại</Text>
+        </View>
+        <Pressable
+          onPress={() => {
+            setShowCategoryModal(true);
+          }}>
+          <View>
+            <AppInput editable={false} value={podcastCategory} />
+          </View>
+        </Pressable>
+        <Form
+          onSubmit={handleSubmit}
+          initialValues={initialValues}
+          validationSchema={UploadFileValidationSchema}>
+          <View style={styles.formContainer}>
+            <InputField
+              name="title"
+              placeholder="Tiêu đề"
+              label="Tiêu đề Podcast"
+            />
+            <InputField
+              name="desc"
+              placeholder="Mô tả"
+              label="Mô tả Podcast"
+              numberOfLines={6}
+              multinine={true}
+              textAlignVertical="top"
+            />
+            <View>
+              <SubmitButton title="Đăng tải" />
+            </View>
+          </View>
+        </Form>
+      </ScrollView>
+    );
+  }
 };
 
 const styles = StyleSheet.create({
@@ -261,6 +295,18 @@ const styles = StyleSheet.create({
   },
   icon: {
     position: 'absolute',
+  },
+  lockFeature: {
+    backgroundColor: colors.THIRD,
+    borderRadius: 8,
+    padding: 20,
+    paddingTop: 0,
+  },
+  info: {
+    fontFamily: 'opensans_regular',
+    color: colors.CONTRAST,
+    textAlign: 'center',
+    marginBottom: 34,
   },
 });
 
