@@ -5,7 +5,7 @@ import { Router } from "express";
 const favoriteRouter = Router();
 
 favoriteRouter.post("/", verifyAuth, toggleFavorite);
-favoriteRouter.get("/", verifyAuth, getAllFavorites);
 favoriteRouter.get("/:audioId", verifyAuth, isFavorive);
+favoriteRouter.get("/", verifyAuth, getAllFavorites);
 
 export default favoriteRouter;

@@ -13,7 +13,12 @@ import colors from '@utils/colors';
 import RecommendPodcast from '@components/RecommendPodcast';
 import OptionsModal from '@components/OptionsModal';
 import MaterialComIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {AudioData, FetchPlaylist, FetchRecommendPodcast} from 'src/hooks/query';
+import {
+  AudioData,
+  FetchPlaylist,
+  FetchRecommendPodcast,
+  fetchIsFavorites,
+} from 'src/hooks/query';
 import axios from 'axios';
 import {getDataFromAsyncStorage, keys} from '@utils/asyncStorage';
 import Toast from 'react-native-toast-message';
@@ -22,7 +27,7 @@ import CreatePlaylistModal from '@components/CreatePlaylistModal';
 import {Playlist} from 'src/@type/playlist';
 import audioController from 'src/hooks/audioController';
 import AppView from '@components/AppView';
-import {useQueryClient} from 'react-query';
+import {useQuery, useQueryClient} from 'react-query';
 
 interface Props {}
 
@@ -35,11 +40,29 @@ const Home: FC<Props> = props => {
   const [showPlaylists, setShowPlaylists] = useState(false);
   const [showCreatePlaylists, setShowCreatePlaylists] = useState(false);
   const [selectedPodcast, setSelectedPodcast] = useState<AudioData>();
+
   const {audioPress} = audioController();
-  const {data} = FetchPlaylist();
+  const {data: playlist} = FetchPlaylist();
   const {isFetching} = FetchRecommendPodcast();
+  const PodcastID = selectedPodcast?.id;
+  const {data: favorite, refetch} = useQuery(['is-favorite', PodcastID], {
+    queryFn: () => fetchIsFavorites(PodcastID || ''),
+    enabled: !!PodcastID,
+  });
   const queryClient = useQueryClient();
 
+  let favTitle = 'Thêm vào Danh sách yêu thích';
+  let favIcon = 'cards-heart-outline';
+
+  const handleLongPress = (item: AudioData) => {
+    setSelectedPodcast(item);
+    refetch;
+    setShowOptions(true);
+  };
+  if (favorite) {
+    favTitle = 'Xóa khỏi Danh sách yêu thích';
+    favIcon = 'cards-heart';
+  }
   const handleAddFav = async () => {
     if (!selectedPodcast) return;
     const token = await getDataFromAsyncStorage(keys.AUTH_TOKEN);
@@ -54,10 +77,15 @@ const Home: FC<Props> = props => {
         },
       );
       queryClient.invalidateQueries({queryKey: ['favorites-podcast']});
-      if (data) {
+      if (data.status === 'liked') {
         Toast.show({
           type: 'success',
           text1: 'Đã thêm vào yêu thích',
+        });
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: 'Đã xóa khỏi yêu thích',
         });
       }
     } catch (error) {
@@ -173,17 +201,11 @@ const Home: FC<Props> = props => {
             <Text style={styles.headingTitle}>Nghe ngay</Text>
           </View>
           <LastestAndRecentPodcast
-            onPodcastLongPress={item => {
-              setShowOptions(true);
-              setSelectedPodcast(item);
-            }}
+            onPodcastLongPress={handleLongPress}
             onPodcastPress={audioPress}
           />
           <RecommendPodcast
-            onPodcastLongPress={item => {
-              setShowOptions(true);
-              setSelectedPodcast(item);
-            }}
+            onPodcastLongPress={handleLongPress}
             onPodcastPress={audioPress}
           />
           <OptionsModal
@@ -193,8 +215,8 @@ const Home: FC<Props> = props => {
             }}
             options={[
               {
-                title: 'Thêm vào Danh sách yêu thích',
-                icon: 'cards-heart-outline',
+                title: favTitle,
+                icon: favIcon,
                 onPress: handleAddFav,
               },
               {
@@ -227,7 +249,7 @@ const Home: FC<Props> = props => {
             onRequestClose={() => {
               setShowPlaylists(false);
             }}
-            list={data || []}
+            list={playlist || []}
           />
           <CreatePlaylistModal
             visible={showCreatePlaylists}
