@@ -4,12 +4,14 @@ import PodcastCardHorizontal from '@ui/PodcastCardHorizontal';
 import colors from '@utils/colors';
 import {FC} from 'react';
 import {View, StyleSheet, Text, ScrollView} from 'react-native';
+import audioController from 'src/hooks/audioController';
 import {FetchFavoritesPodcast} from 'src/hooks/query';
 
 interface Props {}
 
 const Favorites: FC<Props> = props => {
   const {data, isLoading} = FetchFavoritesPodcast();
+  const {audioPress} = audioController();
 
   if (isLoading)
     return (
@@ -30,7 +32,9 @@ const Favorites: FC<Props> = props => {
                 poster={item.poster}
                 owner={item.owner}
                 onLongPress={() => {}}
-                onPress={() => {}}
+                onPress={() => {
+                  audioPress(item, data);
+                }}
               />
             );
           })}
