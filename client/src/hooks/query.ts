@@ -213,15 +213,28 @@ export const fetchIsFavorites = async (id: string): Promise<boolean> => {
   return data.favorite;
 };
 
-export const FetchIsFavorites = (id: string) => {
-  return useQuery(['is-favorite', id], {
-    queryFn: () => fetchIsFavorites(id),
+const fetchAutoPlaylist = async (): Promise<AudioData[]> => {
+  const token = await getDataFromAsyncStorage(keys.AUTH_TOKEN);
+  const {data} = await axios.get(
+    'http://10.0.2.2:8080/profile/getAutoPlaylist',
+    {
+      headers: {
+        Authorization: 'Bearer ' + token,
+        'Content-Type': 'multipart/form-data;',
+      },
+    },
+  );
+  return data.finalList;
+};
+
+export const FetchAutoPlaylist = () => {
+  return useQuery(['auto-playlist'], {
+    queryFn: () => fetchAutoPlaylist(),
     onError(err) {
       Toast.show({
         type: 'error',
         text1: 'Có lỗi trong quá trình tải',
       });
     },
-    enabled: false,
   });
 };

@@ -28,6 +28,7 @@ import {Playlist} from 'src/@type/playlist';
 import audioController from 'src/hooks/audioController';
 import AppView from '@components/AppView';
 import {useQuery, useQueryClient} from 'react-query';
+import AutoPlaylist from '@components/AutoPlaylist';
 
 interface Props {}
 
@@ -189,6 +190,9 @@ const Home: FC<Props> = props => {
                 queryClient.invalidateQueries({
                   queryKey: ['recent-play'],
                 });
+                queryClient.invalidateQueries({
+                  queryKey: ['auto-playlist'],
+                });
               }}
             />
           }
@@ -259,6 +263,7 @@ const Home: FC<Props> = props => {
             }}
             onSubmitCreatePlaylist={handleSubmitCreatePlaylist}
           />
+          <AutoPlaylist />
         </ScrollView>
       </AppView>
     </PlayerContext.Provider>
