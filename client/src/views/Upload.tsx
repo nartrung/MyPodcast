@@ -9,7 +9,7 @@ import {getDataFromAsyncStorage, keys} from '@utils/asyncStorage';
 import colors from '@utils/colors';
 import axios from 'axios';
 import {FormikHelpers} from 'formik';
-import {FC, useState} from 'react';
+import {FC, useEffect, useState} from 'react';
 import {
   View,
   StyleSheet,
@@ -23,10 +23,11 @@ import {DocumentPickerResponse, types} from 'react-native-document-picker';
 import Toast from 'react-native-toast-message';
 import MaterialComIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useQueryClient} from 'react-query';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {ProfileStackNavigitionScreen} from 'src/@type/navigation';
+import {FetchProfile} from 'src/hooks/query';
 import {RootState} from 'src/store';
-import {getAuthState} from 'src/store/auth';
+import {getAuthState, updateProfile} from 'src/store/auth';
 import * as yup from 'yup';
 
 interface Props {}
@@ -152,9 +153,17 @@ const Upload: FC<Props> = props => {
 
     actions.setSubmitting(false);
   };
+  const dispatch = useDispatch();
+  let {data} = FetchProfile();
+
   const profile = useSelector(
     (rootState: RootState) => getAuthState(rootState).profile,
   );
+
+  setTimeout(() => {
+    if (data && profile == null) dispatch(updateProfile(data));
+  }, 10);
+  useEffect(() => {}, [profile]);
   const navigation =
     useNavigation<NavigationProp<ProfileStackNavigitionScreen>>();
   if (!profile?.verified) {

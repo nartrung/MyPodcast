@@ -31,7 +31,7 @@ const fetchLastestPodcast = async (): Promise<AudioData[]> => {
 };
 
 export const FetchLastestPodcast = () => {
-  return useQuery(['latest-podcast'], {
+  return useQuery(['lastest-podcast'], {
     queryFn: () => fetchLastestPodcast(),
     onError(err) {
       Toast.show({

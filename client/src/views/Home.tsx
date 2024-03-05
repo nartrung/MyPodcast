@@ -188,6 +188,9 @@ const Home: FC<Props> = props => {
                   queryKey: ['recommend-podcast'],
                 });
                 queryClient.invalidateQueries({
+                  queryKey: ['lastest-podcast'],
+                });
+                queryClient.invalidateQueries({
                   queryKey: ['recent-play'],
                 });
                 queryClient.invalidateQueries({
