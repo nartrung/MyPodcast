@@ -18,6 +18,13 @@ export interface AudioData {
   ownerId: string;
 }
 
+export interface UserPublicProfile {
+  id: string;
+  name: string;
+  followers: number;
+  avatar?: string;
+}
+
 const fetchLastestPodcast = async (): Promise<AudioData[]> => {
   const {data} = await axios.get('http://10.0.2.2:8080/audio/lastest');
   return data.audios;
@@ -230,6 +237,48 @@ const fetchAutoPlaylist = async (): Promise<AudioData[]> => {
 export const FetchAutoPlaylist = () => {
   return useQuery(['auto-playlist'], {
     queryFn: () => fetchAutoPlaylist(),
+    onError(err) {
+      Toast.show({
+        type: 'error',
+        text1: 'Có lỗi trong quá trình tải',
+      });
+    },
+  });
+};
+
+const fetchUserProfile = async (id: string): Promise<UserPublicProfile> => {
+  const token = await getDataFromAsyncStorage(keys.AUTH_TOKEN);
+  const {data} = await axios.get('http://10.0.2.2:8080/profile/info/' + id, {
+    headers: {
+      Authorization: 'Bearer ' + token,
+      'Content-Type': 'multipart/form-data;',
+    },
+  });
+  return data.profile;
+};
+
+export const FetchUserProfile = (id: string) => {
+  return useQuery(['user-profile', id], {
+    queryFn: () => fetchUserProfile(id),
+    onError(err) {
+      Toast.show({
+        type: 'error',
+        text1: 'Có lỗi trong quá trình tải',
+      });
+    },
+  });
+};
+
+const fetchUserUploadedPodcast = async (id: string): Promise<AudioData[]> => {
+  const {data} = await axios.get(
+    'http://10.0.2.2:8080/profile/all-uploads/' + id,
+  );
+  return data.audios;
+};
+
+export const FetchUserUploadedPodcast = (id: string) => {
+  return useQuery(['user-uploaded-podcast', id], {
+    queryFn: () => fetchUserUploadedPodcast(id),
     onError(err) {
       Toast.show({
         type: 'error',

@@ -1,11 +1,11 @@
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import colors from '@utils/colors';
-import Home from '@views/Home';
 import ProfileNavigator from './ProfileNavigator';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialComIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Upload from '@views/Upload';
+import HomeNavigator from './HomeNavigator';
 
 const Tab = createBottomTabNavigator();
 
@@ -21,8 +21,8 @@ function TabNavigator() {
         tabBarShowLabel: false,
       }}>
       <Tab.Screen
-        name="Home"
-        component={Home}
+        name="HomeNavigator"
+        component={HomeNavigator}
         options={{
           tabBarIcon: ({focused}) => {
             return (

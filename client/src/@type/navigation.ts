@@ -21,3 +21,8 @@ export type ProfileStackNavigitionScreen = {
   Profile: undefined;
   EmailVerification: {userInfo: NewUser};
 };
+
+export type HomeStackNavigitionScreen = {
+  Home: undefined;
+  UserProfile: {userId: string};
+};

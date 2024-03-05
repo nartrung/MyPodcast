@@ -22,13 +22,14 @@ import {PlayerContext} from '@views/Home';
 interface Props {
   visible: boolean;
   onRequestClose(): void;
+  onProfilePress(): void;
 }
 
 const fmDuration = (duration = 0) => {
   return formatDuration(duration);
 };
 
-const AudioPlayer: FC<Props> = ({visible, onRequestClose}) => {
+const AudioPlayer: FC<Props> = ({visible, onRequestClose, onProfilePress}) => {
   const {setShowOptions, setSelectedPodcast} = useContext(PlayerContext);
   const [showAudioInfo, setShowAudioInfo] = useState(false);
   const onGoingAudio = useSelector(
@@ -104,7 +105,9 @@ const AudioPlayer: FC<Props> = ({visible, onRequestClose}) => {
             {onGoingAudio?.title}
           </Text>
           <View style={{marginLeft: 18}}>
-            <AppLink title={onGoingAudio?.owner || ''}></AppLink>
+            <AppLink
+              onPress={onProfilePress}
+              title={onGoingAudio?.owner || ''}></AppLink>
           </View>
           <Slider
             style={{marginTop: 15}}

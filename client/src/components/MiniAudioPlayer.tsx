@@ -10,6 +10,8 @@ import audioController from 'src/hooks/audioController';
 import {RootState} from 'src/store';
 import {getPlayerState} from 'src/store/player';
 import AudioPlayer from './AudioPlayer';
+import {NavigationProp, useNavigation} from '@react-navigation/native';
+import {HomeStackNavigitionScreen} from 'src/@type/navigation';
 
 interface Props {}
 
@@ -27,11 +29,18 @@ const MiniAudioPlayer: FC<Props> = props => {
     : require('../assets/images/DummyPoster.png');
 
   const [showAudioPlayer, setShowAudioPlayer] = useState(false);
+  const navigation = useNavigation<NavigationProp<HomeStackNavigitionScreen>>();
   const closeAudioPlayer = () => {
     setShowAudioPlayer(false);
   };
   const openAudioPlayer = () => {
     setShowAudioPlayer(true);
+  };
+  const handleProfilePress = () => {
+    closeAudioPlayer();
+    navigation.navigate('UserProfile', {
+      userId: onGoingAudio?.ownerId || '',
+    });
   };
   return (
     <>
@@ -67,6 +76,7 @@ const MiniAudioPlayer: FC<Props> = props => {
       <AudioPlayer
         visible={showAudioPlayer}
         onRequestClose={closeAudioPlayer}
+        onProfilePress={handleProfilePress}
       />
     </>
   );
