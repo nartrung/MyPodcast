@@ -39,6 +39,14 @@ const LastestAndRecentPodcast: FC<Props> = ({
             })}
           </View>
         </View>
+        <View>
+          <View style={styles.dummyTitle} />
+          <View style={styles.dummyContainer}>
+            {dummyPodcast.map((_, i) => {
+              return <View key={i} style={styles.dummyPodcast} />;
+            })}
+          </View>
+        </View>
       </LoadingAnimation>
     );
   return (
