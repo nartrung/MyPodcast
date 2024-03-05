@@ -269,6 +269,7 @@ const styles = StyleSheet.create({
   heading: {
     height: 60,
     flexDirection: 'row',
+    alignItems: 'center',
   },
   headingImage: {
     height: 40,
