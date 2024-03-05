@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     paddingRight: 10,
   },
   overlay: {
-    padding: 35,
+    padding: 25,
     ...StyleSheet.absoluteFillObject,
     justifyContent: 'center',
   },
