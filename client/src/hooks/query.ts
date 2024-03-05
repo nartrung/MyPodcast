@@ -287,3 +287,22 @@ export const FetchUserUploadedPodcast = (id: string) => {
     },
   });
 };
+
+const fetchUserPlaylist = async (id: string): Promise<Playlist[]> => {
+  const {data} = await axios.get(
+    'http://10.0.2.2:8080/profile/all-playlists/' + id,
+  );
+  return data.playlist;
+};
+
+export const FetchUserPlaylist = (id: string) => {
+  return useQuery(['user-playlist', id], {
+    queryFn: () => fetchUserPlaylist(id),
+    onError(err) {
+      Toast.show({
+        type: 'error',
+        text1: 'Có lỗi trong quá trình tải',
+      });
+    },
+  });
+};
