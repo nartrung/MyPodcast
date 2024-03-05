@@ -24,5 +24,6 @@ export type ProfileStackNavigitionScreen = {
 
 export type HomeStackNavigitionScreen = {
   Home: undefined;
+  Profile: undefined;
   UserProfile: {userId: string};
 };

@@ -43,7 +43,7 @@ const audioController = () => {
   );
   const dispatch = useDispatch();
   const isPlayerReady =
-    playbackState !== State.None && playbackState != undefined;
+    playbackState !== State.None && playbackState !== undefined;
   const isPlaying = playbackState === State.Playing;
   const isPaused = playbackState === State.Paused;
   const isBusy =
@@ -69,7 +69,7 @@ const audioController = () => {
     if (isPaused && onGoingAudio?.id === item.id) {
       return await TrackPlayer.play();
     }
-    if (onGoingAudio?.id !== item.id) {
+    if (onGoingAudio?.id !== undefined && onGoingAudio?.id !== item.id) {
       const isSameList = deepEqual(onGoingList, data);
       await TrackPlayer.pause();
       const index = data.findIndex(audio => audio.id === item.id);

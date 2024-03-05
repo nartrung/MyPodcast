@@ -12,6 +12,7 @@ import {getPlayerState} from 'src/store/player';
 import AudioPlayer from './AudioPlayer';
 import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {HomeStackNavigitionScreen} from 'src/@type/navigation';
+import {getAuthState} from 'src/store/auth';
 
 interface Props {}
 
@@ -20,6 +21,9 @@ export const MiniPlayerHeight = 50;
 const MiniAudioPlayer: FC<Props> = props => {
   const onGoingAudio = useSelector(
     (rootState: RootState) => getPlayerState(rootState).onGoingAudio,
+  );
+  const profile = useSelector(
+    (rootState: RootState) => getAuthState(rootState).profile,
   );
   const {isPlaying, togglePlayPause, isBusy} = audioController();
   const progress = useProgress();
@@ -38,9 +42,13 @@ const MiniAudioPlayer: FC<Props> = props => {
   };
   const handleProfilePress = () => {
     closeAudioPlayer();
-    navigation.navigate('UserProfile', {
-      userId: onGoingAudio?.ownerId || '',
-    });
+    if (profile?.id === onGoingAudio?.ownerId) {
+      navigation.navigate('Profile');
+    } else {
+      navigation.navigate('UserProfile', {
+        userId: onGoingAudio?.ownerId || '',
+      });
+    }
   };
   return (
     <>
