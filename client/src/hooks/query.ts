@@ -18,6 +18,12 @@ export interface AudioData {
   ownerId: string;
 }
 
+export interface PlaylistDetail {
+  id: string;
+  title: string;
+  audios: AudioData[];
+}
+
 export interface UserPublicProfile {
   id: string;
   name: string;
@@ -220,7 +226,7 @@ export const fetchIsFavorites = async (id: string): Promise<boolean> => {
   return data.favorite;
 };
 
-const fetchAutoPlaylist = async (): Promise<AudioData[]> => {
+const fetchAutoPlaylist = async (): Promise<Playlist[]> => {
   const token = await getDataFromAsyncStorage(keys.AUTH_TOKEN);
   const {data} = await axios.get(
     'http://10.0.2.2:8080/profile/getAutoPlaylist',
@@ -298,6 +304,31 @@ const fetchUserPlaylist = async (id: string): Promise<Playlist[]> => {
 export const FetchUserPlaylist = (id: string) => {
   return useQuery(['user-playlist', id], {
     queryFn: () => fetchUserPlaylist(id),
+    onError(err) {
+      Toast.show({
+        type: 'error',
+        text1: 'Có lỗi trong quá trình tải',
+      });
+    },
+  });
+};
+
+export const fetchPlaylistAudio = async (
+  id: string,
+): Promise<PlaylistDetail> => {
+  const token = await getDataFromAsyncStorage(keys.AUTH_TOKEN);
+  const {data} = await axios.get('http://10.0.2.2:8080/playlist/detail/' + id, {
+    headers: {
+      Authorization: 'Bearer ' + token,
+      'Content-Type': 'multipart/form-data;',
+    },
+  });
+  return data.list;
+};
+
+export const FetchPlaylistAudio = (id: string) => {
+  return useQuery(['playlist-audio', id], {
+    queryFn: () => fetchPlaylistAudio(id),
     onError(err) {
       Toast.show({
         type: 'error',

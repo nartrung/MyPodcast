@@ -3,13 +3,24 @@ import LoadingAnimation from '@ui/LoadingAnimation';
 import PlaylistItem from '@ui/PlaylistItem';
 import colors from '@utils/colors';
 import {FC} from 'react';
-import {View, StyleSheet, Text, ScrollView} from 'react-native';
+import {StyleSheet, Text, ScrollView} from 'react-native';
+import {useDispatch} from 'react-redux';
+import {Playlist} from 'src/@type/playlist';
 import {FetchPlaylist} from 'src/hooks/query';
+import {
+  updatePlaylistVisibility,
+  updateSelectedPlaylistId,
+} from 'src/store/playlist';
 
 interface Props {}
 
 const Playlists: FC<Props> = props => {
   const {data, isLoading} = FetchPlaylist();
+  const dispatch = useDispatch();
+  const handleOnPlaylistPress = (playlist: Playlist) => {
+    dispatch(updateSelectedPlaylistId(playlist.id));
+    dispatch(updatePlaylistVisibility(true));
+  };
   if (isLoading)
     return (
       <LoadingAnimation>
@@ -20,7 +31,13 @@ const Playlists: FC<Props> = props => {
     <ScrollView style={styles.container}>
       <Text style={styles.sectionTitle}>Danh sách phát của tôi</Text>
       {data?.map(playlist => {
-        return <PlaylistItem key={playlist.id} playlist={playlist} />;
+        return (
+          <PlaylistItem
+            key={playlist.id}
+            playlist={playlist}
+            onPlaylistPress={() => handleOnPlaylistPress(playlist)}
+          />
+        );
       })}
     </ScrollView>
   );

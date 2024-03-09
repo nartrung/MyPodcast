@@ -1,5 +1,5 @@
 import {FC} from 'react';
-import {View, StyleSheet, Text} from 'react-native';
+import {View, StyleSheet, Text, Pressable} from 'react-native';
 import {Playlist} from 'src/@type/playlist';
 import Entypo from 'react-native-vector-icons/Entypo';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -8,12 +8,13 @@ import colors from '@utils/colors';
 
 interface Props {
   playlist: Playlist;
+  onPlaylistPress?(): void;
 }
 
-const PlaylistItem: FC<Props> = ({playlist}) => {
+const PlaylistItem: FC<Props> = ({playlist, onPlaylistPress}) => {
   const {id, title, itemsCount, visibility} = playlist;
   return (
-    <View style={styles.container}>
+    <Pressable style={styles.container} onPress={onPlaylistPress}>
       <View style={styles.icon}>
         <Entypo name="folder-music" size={40} color={colors.CONTRAST} />
       </View>
@@ -34,7 +35,7 @@ const PlaylistItem: FC<Props> = ({playlist}) => {
           <Text style={styles.itemCount}>{itemsCount} Podcast</Text>
         </View>
       </View>
-    </View>
+    </Pressable>
   );
 };
 

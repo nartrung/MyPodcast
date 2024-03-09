@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
   recommendPodcast: {
     maxWidth: '100%',
     marginHorizontal: 15,
-    borderBottomColor: colors.STROKE,
+    borderBottomColor: colors.CONTRAST_OVER,
     borderBottomWidth: 0.8,
   },
   poster: {

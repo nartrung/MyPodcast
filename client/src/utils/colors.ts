@@ -7,6 +7,7 @@ const ERROR = '#FF3014';
 const SUCCESS = '#69D34E';
 const STROKE = '#DADADA';
 const OVERLAY = 'rgba(255,255,255, 0.5)';
+const CONTRAST_OVER = 'rgba(0,0,0, 0.5)';
 const PRIMARY_OVERLAY = '#FFBA60';
 const CONTRAST_OVERLAY = '#620404';
 
@@ -22,6 +23,7 @@ const colors = {
   OVERLAY,
   PRIMARY_OVERLAY,
   CONTRAST_OVERLAY,
+  CONTRAST_OVER,
 };
 
 export default colors;

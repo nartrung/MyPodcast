@@ -8,11 +8,14 @@ import {
   Image,
   ScrollView,
 } from 'react-native';
+import {Playlist} from 'src/@type/playlist';
 import {FetchAutoPlaylist} from 'src/hooks/query';
 
-interface Props {}
+interface Props {
+  onPlaylistPress(playlist: Playlist): void;
+}
 
-const AutoPlaylist: FC<Props> = props => {
+const AutoPlaylist: FC<Props> = ({onPlaylistPress}) => {
   const {data} = FetchAutoPlaylist();
   return (
     <View style={styles.container}>
@@ -23,7 +26,10 @@ const AutoPlaylist: FC<Props> = props => {
         style={styles.scrollView}>
         {data?.map(item => {
           return (
-            <Pressable key={item.id + '@'} style={styles.playlist}>
+            <Pressable
+              onPress={() => onPlaylistPress(item)}
+              key={item.id}
+              style={styles.playlist}>
               <Image
                 source={require('../assets/images/PlaylistForYou.png')}
                 style={styles.image}

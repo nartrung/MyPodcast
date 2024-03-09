@@ -4,7 +4,13 @@ import PlaylistItem from '@ui/PlaylistItem';
 import colors from '@utils/colors';
 import {FC} from 'react';
 import {View, StyleSheet, Text, ScrollView} from 'react-native';
+import {useDispatch} from 'react-redux';
+import {Playlist} from 'src/@type/playlist';
 import {FetchUserPlaylist} from 'src/hooks/query';
+import {
+  updatePlaylistVisibility,
+  updateSelectedPlaylistId,
+} from 'src/store/playlist';
 
 interface Props {
   route: any;
@@ -12,6 +18,11 @@ interface Props {
 
 const UserPublicPlaylist: FC<Props> = props => {
   const {data, isLoading} = FetchUserPlaylist(props.route.params.userId);
+  const dispatch = useDispatch();
+  const handleOnPlaylistPress = (playlist: Playlist) => {
+    dispatch(updateSelectedPlaylistId(playlist.id));
+    dispatch(updatePlaylistVisibility(true));
+  };
   if (isLoading)
     return (
       <LoadingAnimation>
@@ -22,7 +33,13 @@ const UserPublicPlaylist: FC<Props> = props => {
     <ScrollView style={styles.container}>
       <Text style={styles.sectionTitle}>Danh sách phát</Text>
       {data?.map(playlist => {
-        return <PlaylistItem key={playlist.id} playlist={playlist} />;
+        return (
+          <PlaylistItem
+            key={playlist.id}
+            playlist={playlist}
+            onPlaylistPress={() => handleOnPlaylistPress(playlist)}
+          />
+        );
       })}
     </ScrollView>
   );

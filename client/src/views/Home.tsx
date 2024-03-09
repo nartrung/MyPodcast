@@ -29,6 +29,11 @@ import audioController from 'src/hooks/audioController';
 import AppView from '@components/AppView';
 import {useQuery, useQueryClient} from 'react-query';
 import AutoPlaylist from '@components/AutoPlaylist';
+import {useDispatch} from 'react-redux';
+import {
+  updatePlaylistVisibility,
+  updateSelectedPlaylistId,
+} from 'src/store/playlist';
 
 interface Props {}
 
@@ -51,6 +56,7 @@ const Home: FC<Props> = props => {
     enabled: !!PodcastID,
   });
   const queryClient = useQueryClient();
+  const dispatch = useDispatch();
 
   let favTitle = 'Thêm vào Danh sách yêu thích';
   let favIcon = 'cards-heart-outline';
@@ -171,6 +177,11 @@ const Home: FC<Props> = props => {
     }
   };
 
+  const handleOnPlaylistPress = (playlist: Playlist) => {
+    dispatch(updateSelectedPlaylistId(playlist.id));
+    dispatch(updatePlaylistVisibility(true));
+  };
+
   return (
     <PlayerContext.Provider
       value={{
@@ -266,7 +277,7 @@ const Home: FC<Props> = props => {
             }}
             onSubmitCreatePlaylist={handleSubmitCreatePlaylist}
           />
-          <AutoPlaylist />
+          <AutoPlaylist onPlaylistPress={handleOnPlaylistPress} />
         </ScrollView>
       </AppView>
     </PlayerContext.Provider>
