@@ -338,3 +338,30 @@ export const FetchPlaylistAudio = (id: string) => {
     },
   });
 };
+
+const fetchIsFollowing = async (id: string): Promise<boolean> => {
+  const token = await getDataFromAsyncStorage(keys.AUTH_TOKEN);
+
+  const {data} = await axios.get(
+    'http://10.0.2.2:8080/profile/isFollowing/' + id,
+    {
+      headers: {
+        Authorization: 'Bearer ' + token,
+        'Content-Type': 'multipart/form-data;',
+      },
+    },
+  );
+  return data.following;
+};
+
+export const FetchIsFollowing = (id: string) => {
+  return useQuery(['is-following', id], {
+    queryFn: () => fetchIsFollowing(id),
+    onError(err) {
+      Toast.show({
+        type: 'error',
+        text1: 'Có lỗi trong quá trình tải',
+      });
+    },
+  });
+};

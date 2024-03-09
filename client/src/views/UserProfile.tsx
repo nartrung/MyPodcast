@@ -6,11 +6,15 @@ import colors from '@utils/colors';
 import {FC} from 'react';
 import {View, StyleSheet, Text, Pressable} from 'react-native';
 import {HomeStackNavigitionScreen} from 'src/@type/navigation';
-import {FetchUserProfile} from 'src/hooks/query';
+import {FetchIsFollowing, FetchUserProfile} from 'src/hooks/query';
 import UserPublicUploads from './userProfile/UserPublicUploads';
 import UserPublicPlaylist from './userProfile/UserPublicPlaylist';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {NavigationProp, useNavigation} from '@react-navigation/native';
+import {getDataFromAsyncStorage, keys} from '@utils/asyncStorage';
+import axios from 'axios';
+import Toast from 'react-native-toast-message';
+import {useMutation, useQueryClient} from 'react-query';
 
 type Props = NativeStackScreenProps<HomeStackNavigitionScreen, 'UserProfile'>;
 
@@ -19,6 +23,39 @@ const Tab = createMaterialTopTabNavigator();
 const UserProfile: FC<Props> = ({route}) => {
   const {userId} = route.params;
   const {data} = FetchUserProfile(userId);
+  const {data: isFollowing} = FetchIsFollowing(userId);
+  const queryClient = useQueryClient();
+  const followingMutation = useMutation({
+    mutationFn: async id => toggleFollow(id),
+    onMutate: (id: string) => {
+      queryClient.setQueryData<boolean>(
+        ['is-following', id],
+        oldData => !oldData,
+      );
+    },
+  });
+  const toggleFollow = async (id: string) => {
+    try {
+      if (!id) return;
+      const token = await getDataFromAsyncStorage(keys.AUTH_TOKEN);
+      queryClient.invalidateQueries({queryKey: ['user-profile', id]});
+      await axios.post(
+        'http://10.0.2.2:8080/profile/update-follower/' + id,
+        null,
+        {
+          headers: {
+            Authorization: 'Bearer ' + token,
+            'Content-Type': 'multipart/form-data;',
+          },
+        },
+      );
+    } catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: 'Có lỗi trong quá trình tải',
+      });
+    }
+  };
   const navigation = useNavigation<NavigationProp<HomeStackNavigitionScreen>>();
   if (!data) return null;
 
@@ -37,8 +74,11 @@ const UserProfile: FC<Props> = ({route}) => {
           <Text style={styles.name}>{data.name}</Text>
           <View style={styles.followContainer}>
             <Text style={styles.follower}>{data.followers} Người theo dõi</Text>
-            <Pressable>
-              <Text style={styles.follow}> Theo dõi + </Text>
+
+            <Pressable onPress={() => followingMutation.mutate(data.id)}>
+              <Text style={styles.follow}>
+                {isFollowing ? 'Hủy theo dõi' : 'Theo dõi +'}
+              </Text>
             </Pressable>
           </View>
         </View>
