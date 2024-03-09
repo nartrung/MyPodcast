@@ -77,7 +77,7 @@ const LastestAndRecentPodcast: FC<Props> = ({
             return (
               <PodcastCard
                 title={item.title}
-                key={item.id}
+                key={item.id + item.date}
                 poster={item.poster}
                 onPress={() => onPodcastPress(item, recentPlayPodcast)}
                 onLongPress={() => {
