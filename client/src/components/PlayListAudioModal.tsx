@@ -7,6 +7,7 @@ import {Image, StyleSheet, Text, View} from 'react-native';
 import {FlatList} from 'react-native-gesture-handler';
 import {useQuery} from 'react-query';
 import {useDispatch, useSelector} from 'react-redux';
+import audioController from 'src/hooks/audioController';
 import {fetchPlaylistAudio} from 'src/hooks/query';
 import {RootState} from 'src/store';
 import {
@@ -33,6 +34,7 @@ const PlayListAudioModal: FC<Props> = props => {
   const handleClose = () => {
     dispatch(updatePlaylistVisibility(false));
   };
+  const {audioPress} = audioController();
   return (
     <AppModal visible={visible} onRequestClose={handleClose}>
       <View>
@@ -64,7 +66,10 @@ const PlayListAudioModal: FC<Props> = props => {
                     poster={item.poster}
                     owner={item.owner}
                     onLongPress={() => {}}
-                    onPress={() => {}}
+                    onPress={() => {
+                      audioPress(item, data?.audios || []);
+                      handleClose();
+                    }}
                   />
                 );
               }}
