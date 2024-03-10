@@ -17,6 +17,7 @@ import {
 } from 'src/store/playlist';
 
 interface Props {}
+let dataHeight;
 
 const PlayListAudioModal: FC<Props> = props => {
   const {visible, selectedPlaylistId} = useSelector((rootState: RootState) =>
@@ -28,6 +29,7 @@ const PlayListAudioModal: FC<Props> = props => {
     queryFn: () => fetchPlaylistAudio(playlistID!),
     enabled: !!playlistID,
   });
+  dataHeight = (data?.audios.length || 8) * 100;
 
   refetch;
   const dispatch = useDispatch();
@@ -56,6 +58,7 @@ const PlayListAudioModal: FC<Props> = props => {
             </View>
             <FlatList
               contentContainerStyle={styles.container}
+              initialNumToRender={data?.audios.length}
               data={data?.audios}
               keyExtractor={item => item.id}
               renderItem={({item}) => {
@@ -82,7 +85,9 @@ const PlayListAudioModal: FC<Props> = props => {
 };
 
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+    paddingBottom: 100,
+  },
   image: {
     width: '100%',
     height: 100,
