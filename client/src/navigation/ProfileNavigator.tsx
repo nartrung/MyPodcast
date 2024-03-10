@@ -3,6 +3,7 @@ import {View, StyleSheet} from 'react-native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Profile from '@views/Profile';
 import EmailVerification from '@views/auth/EmailVerification';
+import AudioUpdateForm from '@views/profile/AudioUpdateForm';
 import {ProfileStackNavigitionScreen} from 'src/@type/navigation';
 
 const Stack = createNativeStackNavigator<ProfileStackNavigitionScreen>();
@@ -16,6 +17,7 @@ const ProfileNavigator: FC<Props> = props => {
         headerShown: false,
       }}>
       <Stack.Screen name="Profile" component={Profile} />
+      <Stack.Screen name="AudioUpdate" component={AudioUpdateForm} />
       <Stack.Screen name="EmailVerification" component={EmailVerification} />
     </Stack.Navigator>
   );

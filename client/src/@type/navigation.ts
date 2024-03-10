@@ -1,3 +1,5 @@
+import {AudioData} from 'src/hooks/query';
+
 interface NewUser {
   id: string;
   name: string;
@@ -19,6 +21,7 @@ export type AuthStackNavigitionScreen = {
 
 export type ProfileStackNavigitionScreen = {
   Profile: undefined;
+  AudioUpdate: {audio: AudioData};
   EmailVerification: {userInfo: NewUser};
 };
 

@@ -1,15 +1,20 @@
+import {NavigationProp, useNavigation} from '@react-navigation/native';
 import AudioLoadingUI from '@ui/AudioLoadingUI';
 import LoadingAnimation from '@ui/LoadingAnimation';
 import PodcastCardHorizontal from '@ui/PodcastCardHorizontal';
 import colors from '@utils/colors';
 import {FC} from 'react';
 import {View, StyleSheet, Text, ScrollView} from 'react-native';
+import {ProfileStackNavigitionScreen} from 'src/@type/navigation';
 import {FetchUploadedPodcast} from 'src/hooks/query';
 
 interface Props {}
 
 const Uploads: FC<Props> = props => {
   const {data, isLoading} = FetchUploadedPodcast();
+  const navigation =
+    useNavigation<NavigationProp<ProfileStackNavigitionScreen>>();
+
   if (isLoading)
     return (
       <LoadingAnimation>
@@ -30,7 +35,9 @@ const Uploads: FC<Props> = props => {
                 poster={item.poster}
                 owner={item.owner}
                 onLongPress={() => {}}
-                onPress={() => {}}
+                onPress={() => {
+                  navigation.navigate('AudioUpdate', {audio: item});
+                }}
               />
             );
           })}

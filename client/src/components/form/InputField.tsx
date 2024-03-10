@@ -15,6 +15,7 @@ interface Props {
   numberOfLines?: number;
   icon?: ReactNode;
   textAlignVertical?: 'auto' | 'center' | 'top' | 'bottom' | undefined;
+  defaultValue?: string;
   onIconPress?(): void;
 }
 
@@ -33,6 +34,7 @@ const InputField: FC<Props> = props => {
     numberOfLines,
     icon,
     textAlignVertical,
+    defaultValue,
     onIconPress,
   } = props;
   const errorMassage = touched[name] && errors[name] ? errors[name] : '';
@@ -43,6 +45,7 @@ const InputField: FC<Props> = props => {
       </View>
       <View>
         <AppInput
+          defaultValue={defaultValue}
           placeholder={placeholder}
           keyboardType={keyboardType}
           autoCapitalize={autoCapitalize}

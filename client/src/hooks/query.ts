@@ -17,6 +17,7 @@ export interface AudioData {
   verified?: boolean | undefined;
   ownerId: string;
   date?: Date;
+  description?: string;
 }
 
 export interface PlaylistDetail {
