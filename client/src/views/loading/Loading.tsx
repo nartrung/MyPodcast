@@ -9,7 +9,10 @@ const Loading: FC<Props> = props => {
   return (
     <SafeAreaView style={styles.container}>
       <View>
-        <Image source={require('../../assets/images/MyPodcastLoading.png')} />
+        <Image
+          style={styles.image}
+          source={require('../../assets/images/MyPodcastLoading.png')}
+        />
       </View>
       <Loader />
     </SafeAreaView>
@@ -23,6 +26,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 16,
+  },
+  image: {
+    height: 140,
+    width: 350,
   },
 });
 
