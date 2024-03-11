@@ -9,12 +9,20 @@ import colors from '@utils/colors';
 interface Props {
   playlist: Playlist;
   onPlaylistPress?(): void;
+  onPlaylistLongPress?(): void;
 }
 
-const PlaylistItem: FC<Props> = ({playlist, onPlaylistPress}) => {
+const PlaylistItem: FC<Props> = ({
+  playlist,
+  onPlaylistPress,
+  onPlaylistLongPress,
+}) => {
   const {id, title, itemsCount, visibility} = playlist;
   return (
-    <Pressable style={styles.container} onPress={onPlaylistPress}>
+    <Pressable
+      style={styles.container}
+      onPress={onPlaylistPress}
+      onLongPress={onPlaylistLongPress}>
       <View style={styles.icon}>
         <Entypo name="folder-music" size={40} color={colors.CONTRAST} />
       </View>

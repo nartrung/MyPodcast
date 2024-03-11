@@ -2,7 +2,6 @@ import ModalContainer from '@ui/ModalContainer';
 import colors from '@utils/colors';
 import {FC, useState} from 'react';
 import {View, StyleSheet, TextInput, Text, Button} from 'react-native';
-import Toast from 'react-native-toast-message';
 
 interface Props {
   visible: boolean;
