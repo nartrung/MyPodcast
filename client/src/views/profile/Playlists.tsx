@@ -8,16 +8,18 @@ import {StyleSheet, Text, ScrollView, Pressable, Alert} from 'react-native';
 import {useDispatch} from 'react-redux';
 import {Playlist} from 'src/@type/playlist';
 import {FetchPlaylist} from 'src/hooks/query';
-import playlist, {
+import {
   updatePlaylistVisibility,
   updateSelectedPlaylistId,
 } from 'src/store/playlist';
 import MaterialComIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import UpdatePlaylistInfoModal from '@components/UpdatePlaylistInfoModal';
 import {getDataFromAsyncStorage, keys} from '@utils/asyncStorage';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
 import {useQueryClient} from 'react-query';
+import CreatePlaylistModal from '@components/CreatePlaylistModal';
 
 interface Props {}
 
@@ -25,6 +27,8 @@ const Playlists: FC<Props> = props => {
   const [showOptions, setShowOptions] = useState(false);
   const [showUpdatePlaylistModal, setShowUpdatePlaylistModal] = useState(false);
   const [selectedPlaylist, setSelectedPlaylist] = useState<Playlist>();
+  const [showCreatePlaylists, setShowCreatePlaylists] = useState(false);
+
   const {data, isLoading} = FetchPlaylist();
   const dispatch = useDispatch();
   const handleOnPlaylistPress = (playlist: Playlist) => {
@@ -98,6 +102,40 @@ const Playlists: FC<Props> = props => {
       });
     }
   };
+  const handleSubmitCreatePlaylist = async (value: string) => {
+    if (value) {
+      const token = await getDataFromAsyncStorage(keys.AUTH_TOKEN);
+      try {
+        await axios.post(
+          'http://10.0.2.2:8080/playlist/create',
+          {
+            title: value,
+          },
+          {
+            headers: {
+              Authorization: 'Bearer ' + token,
+            },
+          },
+        );
+        Toast.show({
+          type: 'success',
+          text1: 'Tạo playlist thành công',
+        });
+        queryClient.invalidateQueries({queryKey: ['playlists']});
+      } catch (error) {
+        Toast.show({
+          type: 'error',
+          text1: 'Đã có lỗi xảy ra! Vui lòng thử lại.',
+        });
+      }
+      setShowCreatePlaylists(false);
+    } else {
+      Toast.show({
+        type: 'info',
+        text1: 'Vui lòng nhập tên Playlist',
+      });
+    }
+  };
   const handleDeltePlaylist = () => {
     Alert.alert(
       'Xóa Danh sách phát',
@@ -136,6 +174,11 @@ const Playlists: FC<Props> = props => {
           );
         })}
       </ScrollView>
+      <Pressable
+        style={styles.addBtn}
+        onPress={() => setShowCreatePlaylists(true)}>
+        <MaterialIcon name="add" size={42} color={colors.SECONDARY} />
+      </Pressable>
       <OptionsModal
         visible={showOptions}
         onRequestClose={() => {
@@ -171,12 +214,28 @@ const Playlists: FC<Props> = props => {
         onSubmitUpdatePlaylist={handleSubmitUpdate}
         initialValue={selectedPlaylist!}
       />
+      <CreatePlaylistModal
+        visible={showCreatePlaylists}
+        onRequestClose={() => {
+          setShowCreatePlaylists(false);
+        }}
+        onSubmitCreatePlaylist={handleSubmitCreatePlaylist}
+      />
     </>
   );
 };
 
 const styles = StyleSheet.create({
   container: {},
+  addBtn: {
+    width: 42,
+    height: 42,
+    backgroundColor: colors.PRIMARY,
+    borderRadius: 26,
+    position: 'absolute',
+    bottom: '5%',
+    right: '5%',
+  },
   sectionTitle: {
     color: colors.CONTRAST,
     fontFamily: 'opensans_bold',
