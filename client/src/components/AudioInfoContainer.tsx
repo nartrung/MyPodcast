@@ -21,20 +21,20 @@ const AudioInfoContainer: FC<Props> = ({visible, closeHandler}) => {
   const onGoingAudio = useSelector(
     (rootState: RootState) => getPlayerState(rootState).onGoingAudio,
   );
+
   return (
     <View style={styles.container}>
-      <View style={styles.heading}>
-        <Text></Text>
-
-        <Pressable onPress={handleClose}>
-          <AntDesign name="close" size={24} color={colors.PRIMARY} />
-        </Pressable>
-      </View>
-
       <ScrollView>
-        <Text style={styles.title} numberOfLines={1}>
-          {onGoingAudio?.title}
-        </Text>
+        <View style={styles.heading}>
+          <Text style={styles.title} numberOfLines={1}>
+            {onGoingAudio?.title}
+          </Text>
+
+          <Pressable onPress={handleClose}>
+            <AntDesign name="close" size={24} color={colors.PRIMARY} />
+          </Pressable>
+        </View>
+
         <View style={{flexDirection: 'row', marginVertical: 10}}>
           <Text style={styles.bold}>Tác giả: </Text>
           <AppLink title={onGoingAudio?.owner || ''} />
@@ -50,7 +50,8 @@ const AudioInfoContainer: FC<Props> = ({visible, closeHandler}) => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 15,
+    marginTop: 40,
+    paddingHorizontal: 15,
   },
   heading: {
     flexDirection: 'row',

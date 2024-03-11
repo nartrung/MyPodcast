@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
   },
   handle: {
     width: '100%',
-    height: 100,
+    height: 40,
     backgroundColor: 'transparent',
     position: 'absolute',
     top: 0,

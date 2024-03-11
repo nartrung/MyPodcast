@@ -238,6 +238,7 @@ export const getRecommendAudios: RequestHandler = async (req, res) => {
         _id: 0,
         id: "$_id",
         title: "$title",
+        about: "$description",
         category: "$category",
         file: "$file.url",
         poster: "$poster.url",

@@ -216,6 +216,7 @@ export const getRecentlyPlayed: RequestHandler = async (req, res) => {
         _id: 0,
         id: "$audioInfo._id",
         title: "$audioInfo.title",
+        about: "$audioInfo.description",
         file: "$audioInfo.file.url",
         poster: "$audioInfo.poster.url",
         category: "$audioInfo.category.url",

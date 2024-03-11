@@ -167,12 +167,12 @@ const styles = StyleSheet.create({
   },
   info: {
     position: 'absolute',
-    top: 10,
+    top: 50,
     left: 15,
   },
   addToList: {
     position: 'absolute',
-    top: 10,
+    top: 50,
     right: 15,
   },
   contentContainer: {

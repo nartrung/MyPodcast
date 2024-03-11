@@ -59,7 +59,9 @@ const LastestAndRecentPodcast: FC<Props> = ({
               title={item.title}
               key={item.id}
               poster={item.poster}
-              onPress={() => onPodcastPress(item, data)}
+              onPress={() => {
+                onPodcastPress(item, data);
+              }}
               onLongPress={() => {
                 onPodcastLongPress(item, data);
               }}
