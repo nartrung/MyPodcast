@@ -107,7 +107,7 @@ export const deleteHistory: RequestHandler = async (req, res) => {
 };
 export const getAllHistories: RequestHandler = async (req, res) => {
   const pageNo = (req.query.pageNo as string) ?? "1";
-  const limit = 20;
+  const limit = 100;
 
   const histories = await History.aggregate([
     { $match: { owner: req.user.id } },
