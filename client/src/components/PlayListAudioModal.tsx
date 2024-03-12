@@ -10,11 +10,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import audioController from 'src/hooks/audioController';
 import {fetchPlaylistAudio} from 'src/hooks/query';
 import {RootState} from 'src/store';
-import {
-  getPlaylistState,
-  updatePlaylistVisibility,
-  updateSelectedPlaylistId,
-} from 'src/store/playlist';
+import {getPlaylistState, updatePlaylistVisibility} from 'src/store/playlist';
 
 interface Props {}
 let dataHeight;
