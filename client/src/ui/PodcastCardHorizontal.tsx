@@ -7,6 +7,7 @@ interface Props {
   title: string;
   owner: string;
   verified?: boolean | undefined;
+  bgColor?: string;
   onPress?(): void;
   onLongPress?(): void;
 }
@@ -28,12 +29,13 @@ const PodcastCardHorizontal: FC<Props> = ({
   title,
   owner,
   verified,
+  bgColor = colors.SECONDARY,
   onLongPress,
   onPress,
 }) => {
   return (
     <Pressable
-      style={styles.recommendPodcast}
+      style={{...styles.recommendPodcast, backgroundColor: bgColor}}
       onPress={onPress}
       onLongPress={onLongPress}>
       <View style={styles.horizontalSection}>
@@ -64,7 +66,7 @@ const PodcastCardHorizontal: FC<Props> = ({
 const styles = StyleSheet.create({
   recommendPodcast: {
     maxWidth: '100%',
-    marginHorizontal: 15,
+    paddingHorizontal: 15,
     borderBottomColor: colors.CONTRAST_OVER,
     borderBottomWidth: 0.8,
   },

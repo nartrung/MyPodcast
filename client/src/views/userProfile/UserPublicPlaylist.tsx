@@ -10,6 +10,7 @@ import {FetchUserPlaylist} from 'src/hooks/query';
 import {
   updatePlaylistVisibility,
   updateSelectedPlaylistId,
+  updateAllowRemovePlaylistId,
 } from 'src/store/playlist';
 
 interface Props {
@@ -20,6 +21,7 @@ const UserPublicPlaylist: FC<Props> = props => {
   const {data, isLoading} = FetchUserPlaylist(props.route.params.userId);
   const dispatch = useDispatch();
   const handleOnPlaylistPress = (playlist: Playlist) => {
+    dispatch(updateAllowRemovePlaylistId(false));
     dispatch(updateSelectedPlaylistId(playlist.id));
     dispatch(updatePlaylistVisibility(true));
   };

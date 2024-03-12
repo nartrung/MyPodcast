@@ -4,10 +4,12 @@ import {RootState} from '.';
 interface Playlist {
   visible: boolean;
   selectedPlaylistId?: string;
+  allowRemove: boolean;
 }
 
 const initialState: Playlist = {
   visible: false,
+  allowRemove: false,
 };
 
 const slice = createSlice({
@@ -20,11 +22,20 @@ const slice = createSlice({
     updateSelectedPlaylistId(playlistState, {payload}: PayloadAction<string>) {
       playlistState.selectedPlaylistId = payload;
     },
+    updateAllowRemovePlaylistId(
+      playlistState,
+      {payload}: PayloadAction<boolean>,
+    ) {
+      playlistState.allowRemove = payload;
+    },
   },
 });
 
-export const {updatePlaylistVisibility, updateSelectedPlaylistId} =
-  slice.actions;
+export const {
+  updatePlaylistVisibility,
+  updateSelectedPlaylistId,
+  updateAllowRemovePlaylistId,
+} = slice.actions;
 
 export const getPlaylistState = (state: RootState) => state.playlist;
 

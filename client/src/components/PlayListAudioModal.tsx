@@ -1,23 +1,58 @@
 import AppModal from '@ui/AppModal';
 import AudioLoadingUI from '@ui/AudioLoadingUI';
 import PodcastCardHorizontal from '@ui/PodcastCardHorizontal';
+import {getDataFromAsyncStorage, keys} from '@utils/asyncStorage';
 import colors from '@utils/colors';
-import {FC} from 'react';
-import {Image, StyleSheet, Text, View} from 'react-native';
-import {FlatList} from 'react-native-gesture-handler';
-import {useQuery} from 'react-query';
+import axios from 'axios';
+import {FC, useState} from 'react';
+import {
+  Image,
+  ListRenderItem,
+  StyleSheet,
+  Text,
+  View,
+  Animated,
+} from 'react-native';
+import {FlatList, Swipeable} from 'react-native-gesture-handler';
+import Toast from 'react-native-toast-message';
+import {useMutation, useQuery, useQueryClient} from 'react-query';
 import {useDispatch, useSelector} from 'react-redux';
 import audioController from 'src/hooks/audioController';
-import {fetchPlaylistAudio} from 'src/hooks/query';
+import {AudioData, PlaylistDetail, fetchPlaylistAudio} from 'src/hooks/query';
 import {RootState} from 'src/store';
 import {getPlaylistState, updatePlaylistVisibility} from 'src/store/playlist';
 
 interface Props {}
-let dataHeight;
+
+const removeAudioFromPlaylist = async (id: string, playlistId: string) => {
+  const token = await getDataFromAsyncStorage(keys.AUTH_TOKEN);
+  try {
+    const url =
+      'http://10.0.2.2:8080/playlist/delete?playlistId=' +
+      playlistId +
+      '&audioId=' +
+      id;
+    await axios.delete(url, {
+      headers: {
+        Authorization: 'Bearer ' + token,
+      },
+    });
+    Toast.show({
+      type: 'success',
+      text1: 'Đã xóa thành công',
+    });
+  } catch (error) {
+    console.log(error);
+    Toast.show({
+      type: 'error',
+      text1: 'Đã có lỗi xảy ra! Vui lòng thử lại.',
+    });
+  }
+};
 
 const PlayListAudioModal: FC<Props> = props => {
-  const {visible, selectedPlaylistId} = useSelector((rootState: RootState) =>
-    getPlaylistState(rootState),
+  const {visible, selectedPlaylistId, allowRemove} = useSelector(
+    (rootState: RootState) => getPlaylistState(rootState),
   );
 
   const playlistID = selectedPlaylistId;
@@ -25,7 +60,6 @@ const PlayListAudioModal: FC<Props> = props => {
     queryFn: () => fetchPlaylistAudio(playlistID!),
     enabled: !!playlistID,
   });
-  dataHeight = (data?.audios.length || 8) * 100;
 
   refetch;
   const dispatch = useDispatch();
@@ -33,6 +67,92 @@ const PlayListAudioModal: FC<Props> = props => {
     dispatch(updatePlaylistVisibility(false));
   };
   const {audioPress} = audioController();
+
+  const queryCLient = useQueryClient();
+  const [removing, setRemoving] = useState(false);
+  const removeMutation = useMutation({
+    mutationFn: async ({id, playlistId}) =>
+      removeAudioFromPlaylist(id, playlistId),
+    onMutate: (variable: {id: string; playlistId: string}) => {
+      queryCLient.setQueryData<PlaylistDetail>(
+        ['playlist-audio', playlistID],
+        oldData => {
+          let finalData: PlaylistDetail = {title: '', id: '', audios: []};
+          if (!oldData) return finalData;
+          const audios = oldData?.audios.filter(
+            item => item.id !== variable.id,
+          );
+          return {...oldData, audios};
+        },
+      );
+    },
+  });
+  const renderSwipeableItem: ListRenderItem<AudioData> = ({item}) => {
+    return (
+      <Swipeable
+        onSwipeableOpen={() => {
+          removeMutation.mutate({id: item.id, playlistId: playlistID || ''});
+          setRemoving(false);
+        }}
+        onSwipeableWillOpen={() => {
+          setRemoving(true);
+        }}
+        renderRightActions={() => {
+          return (
+            <View
+              style={{
+                flex: 1,
+                height: 100,
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'flex-end',
+                backgroundColor: colors.ERROR,
+              }}>
+              <Animated.View>
+                <Text
+                  style={{
+                    color: colors.SECONDARY,
+                    fontFamily: 'opensans_bold',
+                    paddingHorizontal: 10,
+                    fontSize: 16,
+                  }}>
+                  {removing ? 'Đang xóa' : 'Xóa'}
+                </Text>
+              </Animated.View>
+            </View>
+          );
+        }}>
+        <PodcastCardHorizontal
+          bgColor={colors.THIRD}
+          title={item.title}
+          key={item.id}
+          poster={item.poster}
+          owner={item.owner}
+          onLongPress={() => {}}
+          onPress={() => {
+            audioPress(item, data?.audios || []);
+            handleClose();
+          }}
+        />
+      </Swipeable>
+    );
+  };
+  const renderItem: ListRenderItem<AudioData> = ({item}) => {
+    return (
+      <PodcastCardHorizontal
+        bgColor={colors.THIRD}
+        title={item.title}
+        key={item.id}
+        poster={item.poster}
+        owner={item.owner}
+        onLongPress={() => {}}
+        onPress={() => {
+          audioPress(item, data?.audios || []);
+          handleClose();
+        }}
+      />
+    );
+  };
   return (
     <AppModal visible={visible} onRequestClose={handleClose}>
       <View>
@@ -57,21 +177,7 @@ const PlayListAudioModal: FC<Props> = props => {
               initialNumToRender={data?.audios.length}
               data={data?.audios}
               keyExtractor={item => item.id}
-              renderItem={({item}) => {
-                return (
-                  <PodcastCardHorizontal
-                    title={item.title}
-                    key={item.id}
-                    poster={item.poster}
-                    owner={item.owner}
-                    onLongPress={() => {}}
-                    onPress={() => {
-                      audioPress(item, data?.audios || []);
-                      handleClose();
-                    }}
-                  />
-                );
-              }}
+              renderItem={allowRemove ? renderSwipeableItem : renderItem}
             />
           </>
         )}

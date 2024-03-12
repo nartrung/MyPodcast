@@ -4,13 +4,21 @@ import LoadingAnimation from '@ui/LoadingAnimation';
 import PlaylistItem from '@ui/PlaylistItem';
 import colors from '@utils/colors';
 import {FC, useState} from 'react';
-import {StyleSheet, Text, ScrollView, Pressable, Alert} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  ScrollView,
+  Pressable,
+  Alert,
+  RefreshControl,
+} from 'react-native';
 import {useDispatch} from 'react-redux';
 import {Playlist} from 'src/@type/playlist';
 import {FetchPlaylist} from 'src/hooks/query';
 import {
   updatePlaylistVisibility,
   updateSelectedPlaylistId,
+  updateAllowRemovePlaylistId,
 } from 'src/store/playlist';
 import MaterialComIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
@@ -32,6 +40,7 @@ const Playlists: FC<Props> = props => {
   const {data, isLoading} = FetchPlaylist();
   const dispatch = useDispatch();
   const handleOnPlaylistPress = (playlist: Playlist) => {
+    dispatch(updateAllowRemovePlaylistId(true));
     dispatch(updateSelectedPlaylistId(playlist.id));
     dispatch(updatePlaylistVisibility(true));
   };
@@ -161,7 +170,16 @@ const Playlists: FC<Props> = props => {
     );
   return (
     <>
-      <ScrollView style={styles.container}>
+      <ScrollView
+        style={styles.container}
+        refreshControl={
+          <RefreshControl
+            refreshing={isLoading}
+            onRefresh={() => {
+              queryClient.invalidateQueries({queryKey: ['playlists']});
+            }}
+          />
+        }>
         <Text style={styles.sectionTitle}>Danh sách phát của tôi</Text>
         {data?.map(playlist => {
           return (
