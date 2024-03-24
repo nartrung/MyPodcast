@@ -1,4 +1,5 @@
 import express from "express";
+var cors = require("cors");
 import "dotenv/config";
 import "express-async-errors";
 import "./db";
@@ -8,12 +9,14 @@ import favoriteRouter from "./routes/favoriteRouter";
 import playlistRouter from "./routes/playlistRouter";
 import profileRouter from "./routes/profileRouter";
 import historyRouter from "./routes/historyRouter";
+import adminRouter from "./routes/adminRouter";
 import "./utils/schedule";
 import { errorHandler } from "./middlewares/async-error";
 
 const app = express();
 const PORT = 8080;
 
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -23,6 +26,7 @@ app.use("/favorite", favoriteRouter);
 app.use("/playlist", playlistRouter);
 app.use("/profile", profileRouter);
 app.use("/history", historyRouter);
+app.use("/admin", adminRouter);
 app.use(errorHandler);
 
 app.listen(PORT, () => {
