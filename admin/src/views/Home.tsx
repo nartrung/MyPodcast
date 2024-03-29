@@ -4,14 +4,17 @@ import { useEffect, useState } from "react";
 import Podcast, { PodcastTypes } from "../components/Podcast";
 import { FC } from "react";
 import AppView from "../components/AppView";
-import { getPodcastToVerify } from "../services/admin";
+import { deletePodcast, getPodcastToVerify, verifyPodcast } from "../services/admin";
 import { AxiosError } from "axios";
+import { toast } from "react-toastify";
+import Swal from "sweetalert2";
 
 const Home: FC = () => {
   const token = localStorage.getItem("token");
   if (!token) {
     return <Navigate to="/login" />;
   }
+
   const [podcasts, setPodcasts] = useState<PodcastTypes[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const fetchDataAsync = async () => {
@@ -46,12 +49,37 @@ const Home: FC = () => {
   }, [searchQuery]);
 
   const handleApprove = (podcast: PodcastTypes) => {
-    setPodcasts((prev) => prev!.filter((p) => p.id !== podcast.id));
+    verifyPodcast(podcast.id)
+      .then((message) => {
+        toast.success(message);
+        fetchDataAsync();
+      })
+      .catch((error) => {
+        if (error instanceof AxiosError) toast.error(error.response?.data.message);
+      });
   };
 
   const handleReject = (podcast: PodcastTypes) => {
-    // Gọi API để từ chối podcast
-    setPodcasts((prev) => prev!.filter((p) => p.id !== podcast.id));
+    Swal.fire({
+      title: `Bạn có chắc muốn xóa Podcast "${podcast.title}" ? `,
+      text: "Lưu ý: Điều này sẽ không thể hoàn tác!",
+      icon: "question",
+      showDenyButton: true,
+      confirmButtonText: "Xóa",
+      denyButtonText: `Đóng`,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        deletePodcast(podcast.id)
+          .then((data) => {
+            Swal.fire(data.message, "", "success");
+
+            fetchDataAsync();
+          })
+          .catch((error) => {
+            if (error instanceof AxiosError) Swal.fire("Có lỗi xảy ra! Vui lòng thử lại!", "", "error");
+          });
+      }
+    });
   };
   return (
     <AppView>

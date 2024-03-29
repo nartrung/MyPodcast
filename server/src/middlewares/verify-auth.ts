@@ -60,7 +60,6 @@ export const verifyAdmin: RequestHandler = async (req, res, next) => {
 
     const admin = await Admin.findById(userId);
     if (!admin) {
-      console.log("loi 1");
       return res.status(403).json({
         success: false,
         message: "Bạn không có quyền truy cập! Vui lòng thử lại!",
@@ -77,8 +76,6 @@ export const verifyAdmin: RequestHandler = async (req, res, next) => {
     req.token = token;
     next();
   } catch (error) {
-    console.log("loi 12");
-
     return res.status(403).json({
       success: false,
       error: "Có lỗi trong quá trình tải! Vui lòng thử lại!",

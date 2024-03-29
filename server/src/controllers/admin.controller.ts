@@ -74,3 +74,31 @@ export const getPodcast: RequestHandler = async (req, res) => {
   });
   res.json(audios);
 };
+
+export const verifyPodcast: RequestHandler = async (req, res) => {
+  const audioId = req.params.id;
+  const audio = await Audio.findOne({ _id: audioId, verified: false });
+  if (!audio) {
+    return res.status(422).json({
+      message: "Có lỗi xảy ra, vui lòng thử lại!",
+    });
+  } else {
+    audio.verified = true;
+    audio.save();
+  }
+  return res.json({
+    message: "Duyệt thành công",
+  });
+};
+
+export const deletePodcast: RequestHandler = async (req, res) => {
+  const audioId = req.params.id;
+  const audio = await Audio.findOneAndDelete({ _id: audioId, verified: false });
+  if (!audio) {
+    return res.status(422).json({});
+  }
+  return res.json({
+    success: true,
+    message: "Xóa thành công",
+  });
+};

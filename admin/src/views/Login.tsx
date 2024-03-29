@@ -5,6 +5,7 @@ import logo from "../assets/MyPodcastBanner.png";
 import { FC, useState } from "react";
 import { login } from "../services/auth";
 import { Navigate, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const logInValidationSchema = yup.object({
   email: yup
@@ -42,9 +43,9 @@ const Login: FC = () => {
   const [err, setErr] = useState("");
   const handleSubmit = async (values: AdminLogin) => {
     login(values.email, values.password)
-      .then(() => {
+      .then((data) => {
+        toast.success(data.message);
         navigate("/");
-        window.location.reload();
       })
       .catch(() => {
         setErr("Email hoặc mật khẩu không đúng");

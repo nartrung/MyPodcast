@@ -12,3 +12,21 @@ export const getPodcastToVerify = async (): Promise<PodcastTypes[]> => {
     throw error;
   }
 };
+
+export const verifyPodcast = async (id: string) => {
+  try {
+    const { data } = await axios.post(API_URL + `verify/${id}`, null, { headers: authHeader() });
+    return data.message;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const deletePodcast = async (id: string) => {
+  try {
+    const { data } = await axios.delete(API_URL + `delete/${id}`, { headers: authHeader() });
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};

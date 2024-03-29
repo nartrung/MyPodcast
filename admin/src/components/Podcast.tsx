@@ -45,10 +45,14 @@ const Podcast: React.FC<Props> = ({ podcast, searchQuery, onApprove, onReject })
       </TableCell>
       <TableCell align="left">
         <div className="flex gap-2">
-          <button className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600" onClick={() => onApprove}>
+          <button
+            className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
+            onClick={() => onApprove(podcast)}>
             Duyệt
           </button>
-          <button className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600" onClick={() => onReject}>
+          <button
+            className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
+            onClick={() => onReject(podcast)}>
             Xóa
           </button>
         </div>
