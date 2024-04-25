@@ -23,8 +23,7 @@ const EmailVerificationTokensSchema = new Schema<EmailVerificationType, {}, Meth
   },
   createdAt: {
     type: Date,
-    //Expire Token after 1 hour
-    expires: 3600,
+    expires: 36000,
     default: Date.now(),
   },
 });

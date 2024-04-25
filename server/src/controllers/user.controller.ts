@@ -46,7 +46,6 @@ export const create: RequestHandler = async (req: CreateUser, res) => {
   }
 };
 
-//Verify Email
 export const verifyEmail: RequestHandler = async (req: VerifyToken, res) => {
   const { token, userId } = req.body;
 
@@ -68,18 +67,17 @@ export const verifyEmail: RequestHandler = async (req: VerifyToken, res) => {
       success: false,
       error: "Invalid Token",
     });
+  } else {
+    await User.findByIdAndUpdate(userId, {
+      verified: true,
+    });
+
+    await EmailVerificationToken.findByIdAndDelete(verificationToken._id);
+    return res.status(201).json({
+      success: true,
+      message: "Your Email has been verified",
+    });
   }
-
-  await User.findByIdAndUpdate(userId, {
-    verified: true,
-  });
-
-  await EmailVerificationToken.findByIdAndDelete(verificationToken._id);
-
-  res.status(201).json({
-    success: true,
-    message: "Your Email has been verified",
-  });
 };
 
 //Reverify Email Later
