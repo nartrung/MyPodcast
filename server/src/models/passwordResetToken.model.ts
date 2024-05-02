@@ -23,7 +23,6 @@ const PasswordResetTokenSchema = new Schema<PasswordResetType, {}, Methods>({
   },
   createdAt: {
     type: Date,
-    //Expire Token after60 minutes
     expires: 3600,
     default: Date.now(),
   },
@@ -40,8 +39,4 @@ PasswordResetTokenSchema.methods.compareToken = async function (token) {
   return compare(token, this.token);
 };
 
-export default model("PasswordResetToken", PasswordResetTokenSchema) as Model<
-  PasswordResetType,
-  {},
-  Methods
->;
+export default model("PasswordResetToken", PasswordResetTokenSchema) as Model<PasswordResetType, {}, Methods>;

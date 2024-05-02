@@ -125,6 +125,7 @@ const AudioUpdateForm: FC<Props> = props => {
       queryClient.invalidateQueries({queryKey: ['recommend-podcast']});
       queryClient.invalidateQueries({queryKey: ['lastest-podcast']});
       queryClient.invalidateQueries({queryKey: ['recent-play']});
+      queryClient.invalidateQueries({queryKey: ['playlists']});
     } catch (error) {
       Toast.show({
         type: 'error',

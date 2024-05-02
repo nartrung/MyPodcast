@@ -17,6 +17,7 @@ import {
 } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 import Toast from 'react-native-toast-message';
+import {useQueryClient} from 'react-query';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from 'src/store';
 import {getAuthState, updateProfile} from 'src/store/auth';
@@ -34,6 +35,8 @@ interface ProfileInfo {
 const ProfileModal: FC<Props> = ({visibility, onRequestClose}) => {
   const [userInfo, setUserInfo] = useState<ProfileInfo>({name: ''});
   const [busy, setBusy] = useState(false);
+  const queryClient = useQueryClient();
+
   const profile = useSelector(
     (rootState: RootState) => getAuthState(rootState).profile,
   );
@@ -90,6 +93,8 @@ const ProfileModal: FC<Props> = ({visibility, onRequestClose}) => {
 
       dispatch(updateProfile(data.profile));
       onRequestClose();
+      queryClient.invalidateQueries({queryKey: ['favorites-podcast']});
+      queryClient.invalidateQueries({queryKey: ['uploaded-podcast']});
       Toast.show({
         type: 'success',
         text1: 'Thay đổi thông tin thành công',

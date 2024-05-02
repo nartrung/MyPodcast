@@ -37,6 +37,7 @@ const removeAudioFromPlaylist = async (id: string, playlistId: string) => {
         Authorization: 'Bearer ' + token,
       },
     });
+
     Toast.show({
       type: 'success',
       text1: 'Đã xóa thành công',
@@ -71,8 +72,10 @@ const PlayListAudioModal: FC<Props> = props => {
   const queryCLient = useQueryClient();
   const [removing, setRemoving] = useState(false);
   const removeMutation = useMutation({
-    mutationFn: async ({id, playlistId}) =>
-      removeAudioFromPlaylist(id, playlistId),
+    mutationFn: async ({id, playlistId}) => {
+      removeAudioFromPlaylist(id, playlistId);
+      queryCLient.invalidateQueries({queryKey: ['playlists']});
+    },
     onMutate: (variable: {id: string; playlistId: string}) => {
       queryCLient.setQueryData<PlaylistDetail>(
         ['playlist-audio', playlistID],

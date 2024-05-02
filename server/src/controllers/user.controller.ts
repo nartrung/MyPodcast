@@ -72,7 +72,7 @@ export const verifyEmail: RequestHandler = async (req: VerifyToken, res) => {
       verified: true,
     });
 
-    await EmailVerificationToken.findByIdAndDelete(verificationToken._id);
+    // await EmailVerificationToken.findByIdAndDelete(verificationToken._id);
     return res.status(201).json({
       success: true,
       message: "Your Email has been verified",
@@ -97,9 +97,9 @@ export const reVerifyEmail: RequestHandler = async (req, res) => {
     });
   }
 
-  await EmailVerificationToken.findOneAndDelete({
-    owner: userId,
-  });
+  // await EmailVerificationToken.findOneAndDelete({
+  //   owner: userId,
+  // });
 
   const token = generateToken(6);
   await EmailVerificationToken.create({
@@ -168,13 +168,12 @@ export const verifyPasswordResetToken: RequestHandler = async (req: VerifyToken,
       error: "Invalid Token",
     });
   } else {
+    // await PasswordResetToken.findByIdAndDelete(verificationToken._id);
     res.status(201).json({
       valid: true,
       message: "You can change your password now",
     });
   }
-
-  await PasswordResetToken.findByIdAndDelete(verificationToken._id);
 };
 
 export const changePassword: RequestHandler = async (req: ChangePassword, res) => {
